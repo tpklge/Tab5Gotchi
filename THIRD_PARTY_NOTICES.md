@@ -13,3 +13,5 @@ O launcher Tab5Launcher do Paludo (GPL-3.0) foi inspecionado e compilado para co
 Referências técnicas consultadas: https://docs.m5stack.com/en/core/Tab5 e https://docs.espressif.com/projects/esp-idf/en/v5.4.4/esp32p4/api-reference/system/ota.html .
 
 A distribuição neste repositório preserva a licença GPL-3.0 originalmente escolhida pelo proprietário (LICENSE). A licença MIT dos componentes originais permanece disponível em LICENSE-MIT.
+
+O driver de teclado usa o protocolo público do A164 documentado pela M5Stack: https://docs.m5stack.com/en/tab5/Tab5_Keyboard . O decoder HID e sua integração com o editor foram implementados neste projeto.

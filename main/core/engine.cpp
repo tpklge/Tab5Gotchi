@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <limits>
+#include <iterator>
 namespace gotchi {
 uint32_t Rng::next() {
   uint32_t x = state ? state : 0x6d2b79f5;
@@ -80,6 +81,14 @@ uint8_t presentationForm(const State &s) {
     return s.form;
   }
 }
+static void tendency(State &s, const Rules &r, unsigned activity, unsigned kind, float points) {
+  if (activity >= 28 || s.activityCredits[activity] >= r.activityCap) return;
+  float quality = (s.stats[Health] >= 70 && s.stats[Hygiene] >= 50) ? 1.25f : 1.f;
+  unsigned gain = std::max(1, int(points * quality));
+  gain = std::min<unsigned>(gain, r.activityCap - s.activityCredits[activity]);
+  s.activityCredits[activity] += gain;
+  s.tendencies[kind] += gain;
+}
 void evolve(State &s, const Rules &r) {
   if (s.stage == Stage::Egg || s.dead || s.retired)
     return;
@@ -111,6 +120,9 @@ void evolve(State &s, const Rules &r) {
     if (s.stage == Stage::Teen)
       for (auto &t : s.tendencies)
         t = 1 + t / 4;
+    s.milestoneAge[unsigned(s.stage)] = s.age;
+    std::fill(std::begin(s.activityCredits), std::end(s.activityCredits), 0);
+    s.gamesSeen = 0;
     s.pendingEvolution++;
     s.discovered |= 1ULL << (s.family * 8 + s.form);
     char msg[96];
@@ -189,6 +201,21 @@ void tick(State &s, uint64_t ms, const Rules &r) {
     if (s.actionLeft) {
       s.actionLeft = step >= s.actionLeft ? 0 : s.actionLeft - uint32_t(step);
       if (!s.actionLeft) {
+        if (s.action == Action::Explore) {
+          Rng rng{s.eventRng};
+          unsigned event = rng.uniform(6);
+          s.eventRng = rng.state;
+          static const char *messages[] = {
+            "No quintal, encontramos uma folha com formato de coração!",
+            "Uma borboleta acompanhou nosso passeio.",
+            "Descobrimos uma pedrinha brilhante perto do lago.",
+            "Ouvimos um passarinho cantar. Que passeio tranquilo!",
+            "Encontramos um cata-vento para decorar a casa!",
+            "Uma nuvem engraçada parecia outro bichinho."};
+          if (event == 4) s.decorations |= 1u << 7;
+          s.stats[Happy] = std::min(100.f, s.stats[Happy] + 1);
+          log(s, messages[event]);
+        }
         if (s.action == Action::Nap) {
           s.sleeping = 0;
           s.light = 1;
@@ -242,7 +269,7 @@ void resume(State &s, int64_t wall, const Rules &r) {
   s.mode = mode;
   log(s, "Retomada: crescimento registrado e desgaste de ausência limitado.");
 }
-Result act(State &s, Action a, const Food *food) {
+Result act(State &s, Action a, const Food *food, const Rules &r) {
   if (s.dead || s.retired)
     return {false, "Este ciclo terminou. Veja o álbum."};
   if (s.stage == Stage::Egg)
@@ -260,11 +287,15 @@ Result act(State &s, Action a, const Food *food) {
   bool repeat =
       s.cooldown[idx] &&
       now - s.cooldown[idx] <
-          ((a == Action::Praise || a == Action::Guide) ? 300000 : 60000);
+          uint64_t((a == Action::Praise || a == Action::Guide) ? r.educationCooldownSeconds : r.actionCooldownSeconds) * 1000;
   if (repeat && a != Action::Water && a != Action::Wake && a != Action::Sleep &&
       a != Action::Wash && a != Action::Rinse && a != Action::Dry &&
       a != Action::Flush)
     return {false, "Vamos variar um pouco? Tente de novo mais tarde."};
+  float gain[3];
+  float socialScale = (a == Action::Pet || a == Action::Lullaby || a == Action::Praise || a == Action::Guide) ?
+      std::max(r.socialMinimumScale, 1.f - float(s.activityCredits[idx]) / std::max<unsigned>(1, r.activityCap)) : 1.f;
+  for (int i = 0; i < 3; ++i) gain[i] = r.gains[idx][i] * socialScale;
   const char *msg = "Tudo certo!";
   switch (a) {
   case Action::Meal:
@@ -273,11 +304,11 @@ Result act(State &s, Action a, const Food *food) {
     if (s.stats[Full] > 88)
       return {false, "Já estou satisfeito. Guarde para depois!"};
     s.stats[Full] += food                 ? food->fullness
-                     : a == Action::Meal  ? 24
-                     : a == Action::Fruit ? 14
-                                          : 6;
-    s.stats[Happy] += food ? food->happiness : 5;
-    s.stats[Health] += food ? food->health : 1;
+                     : a == Action::Meal  ? gain[0]
+                     : a == Action::Fruit ? gain[0]
+                                          : gain[0];
+    s.stats[Happy] += food ? food->happiness : gain[1];
+    s.stats[Health] += food ? food->health : gain[2];
     s.stats[Urgency] += 7;
     msg = food ? food->name : "Que delícia!";
     if (food && food->icon == s.preferredFood) {
@@ -286,14 +317,14 @@ Result act(State &s, Action a, const Food *food) {
     }
     break;
   case Action::Water:
-    s.stats[Health] += repeat ? 0 : 2;
+    s.stats[Health] += repeat ? 0 : gain[0];
     msg = "Água fresquinha!";
     break;
   case Action::Pet:
   case Action::Lullaby:
-    s.stats[Bond] += 3;
-    s.stats[Happy] += 2;
-    s.tendencies[0] += 2;
+    s.stats[Bond] += gain[0];
+    s.stats[Happy] += gain[1];
+    tendency(s, r, idx, 0, r.tendencyWeights[0]);
     msg = s.sleeping ? "Uma canção de ninar e um carinho suave."
                      : "Carinho recebido!";
     break;
@@ -301,7 +332,7 @@ Result act(State &s, Action a, const Food *food) {
     if (s.stats[Urgency] < 30)
       return {false, "Ainda não preciso do banheiro."};
     s.stats[Urgency] = 0;
-    s.stats[Education] += 3;
+    s.stats[Education] += gain[0];
     s.bathStep = 4;
     msg = "Banheiro usado! Toque em Descarga.";
     break;
@@ -315,7 +346,7 @@ Result act(State &s, Action a, const Food *food) {
     if (!s.poop)
       return {false, "O ambiente está limpo."};
     s.poop = 0;
-    s.stats[Hygiene] += 10;
+    s.stats[Hygiene] += gain[0];
     msg = "Acidente limpo. Obrigado!";
     break;
   case Action::Bath:
@@ -338,20 +369,20 @@ Result act(State &s, Action a, const Food *food) {
     if (s.bathStep != 3)
       return {false, "Enxágue antes de secar."};
     s.bathStep = 0;
-    s.stats[Hygiene] = 100;
-    s.stats[Happy] += 5;
+    s.stats[Hygiene] = gain[0];
+    s.stats[Happy] += gain[1];
     msg = "Limpinho e sequinho!";
     break;
   case Action::Sleep:
     s.sleeping = 1;
     s.light = 0;
-    s.tendencies[0] += repeat ? 0 : 4;
+    if (!repeat) tendency(s, r, idx, 0, gain[0]);
     msg = "Boa noite! O sono recupera energia.";
     break;
   case Action::Nap:
     s.sleeping = 1;
     s.light = 0;
-    s.tendencies[0] += 2;
+    tendency(s, r, idx, 0, gain[0]);
     msg = "Uma soneca de dez minutos. Acordo sozinho!";
     break;
   case Action::Wake:
@@ -362,32 +393,34 @@ Result act(State &s, Action a, const Food *food) {
   case Action::Medicine:
     if (!s.sick)
       return {false, "Sem indicação de remédio. Seu amigo está saudável."};
-    s.stats[Health] += 18;
-    s.stats[Energy] += 5;
+    s.stats[Health] += gain[0];
+    s.stats[Energy] += gain[1];
     msg = "Tratamento aplicado. Descanso também ajuda.";
     break;
   case Action::Praise:
     if (s.stats[Urgency] > 70 || s.stats[Full] < 20 || s.stats[Energy] < 15 ||
         s.stats[Hygiene] < 20 || s.sick || s.poop)
       return {false, "Primeiro cuide da necessidade de verdade."};
-    s.stats[Education] += 3;
-    s.stats[Bond] += 1;
+    s.stats[Education] += gain[0];
+    s.stats[Bond] += gain[1];
+    tendency(s, r, idx, 2, 1);
     msg = "Muito bem! Elogio recebido.";
     break;
   case Action::Guide:
     if (s.stats[Urgency] > 70 || s.stats[Full] < 20 || s.stats[Energy] < 15 ||
         s.stats[Hygiene] < 20 || s.poop || s.sick) {
-      s.stats[Bond] -= 2;
+      s.stats[Bond] -= gain[1];
       msg = "Era uma necessidade real. Vamos cuidar dela.";
     } else {
-      s.stats[Education] += 2;
+      s.stats[Education] += gain[0];
+      tendency(s, r, idx, 0, 1);
       msg = "Orientação com gentileza.";
     }
     break;
   case Action::Explore:
-    s.stats[Energy] -= 4;
-    s.stats[Happy] += 6;
-    s.tendencies[1] += 5;
+    s.stats[Energy] -= gain[0];
+    s.stats[Happy] += gain[1];
+    tendency(s, r, idx, 1, r.tendencyWeights[1]);
     msg = "Exploração no quintal! Uma pequena descoberta.";
     break;
   default:
@@ -397,7 +430,7 @@ Result act(State &s, Action a, const Food *food) {
   s.careCount++;
   s.transaction++;
   s.action = a;
-  s.actionLeft = a == Action::Nap ? 600000 : a == Action::Explore ? 4000 : 1300;
+  s.actionLeft = a == Action::Nap ? r.napDurationSeconds * 1000 : a == Action::Explore ? r.exploreDurationMs : r.actionDurationMs;
   clamp(s);
   log(s, msg);
   return {true, msg};
@@ -472,7 +505,7 @@ bool victory(const Match &m) {
     return m.score > 0;
   return m.wins >= m.losses;
 }
-static void finish(State &s) {
+static void finish(State &s, const Rules &r) {
   auto &m = s.match;
   m.finished = 1;
   m.active = 0;
@@ -481,19 +514,21 @@ static void finish(State &s) {
     s.gameCount++;
     unsigned gameIndex = unsigned(m.kind) - 1;
     if (!s.gameRewardAt[gameIndex] ||
-        s.age + 1 - s.gameRewardAt[gameIndex] >= 300000) {
+        s.age + 1 - s.gameRewardAt[gameIndex] >= uint64_t(r.rewardCooldownSeconds) * 1000) {
       s.gameRewardAt[gameIndex] = s.age + 1;
-      s.stats[Happy] += 4 + (victory(m) ? 2 : 0);
-      s.stats[Bond] += 2;
-      s.stats[Energy] -= 3;
-      s.tendencies[2] += 3;
+      s.stats[Happy] += r.gameHappy + (victory(m) ? r.gameVictory : 0);
+      s.stats[Bond] += r.gameBond;
+      s.stats[Energy] -= r.gameEnergy;
+      bool varied = !(s.gamesSeen & (1u << gameIndex));
+      tendency(s, r, 20 + gameIndex, 2, r.tendencyWeights[2] + (varied ? 2 : 0));
+      s.gamesSeen |= 1u << gameIndex;
     }
     s.transaction++;
     clamp(s);
     log(s, "Brincadeira concluída! A participação também vale carinho.");
   }
 }
-Result play(State &s, int input) {
+Result play(State &s, int input, const Rules &r) {
   auto &m = s.match;
   if (!m.active || m.finished)
     return {false, "Partida encerrada."};
@@ -561,7 +596,7 @@ Result play(State &s, int input) {
       snprintf(m.result, sizeof m.result, "Observe e tente outra vez.");
     }
     if (m.wins == m.pairs)
-      finish(s);
+      finish(s, r);
     return {true, m.result};
   case Game::Sequence:
     if (m.showing)
@@ -572,13 +607,13 @@ Result play(State &s, int input) {
       m.losses++;
       snprintf(m.result, sizeof m.result,
                "Boa tentativa! Você chegou à sequência %u.", m.length);
-      finish(s);
+      finish(s, r);
     } else if (++m.input == m.length) {
       m.wins++;
       if (m.length >= 10) {
         snprintf(m.result, sizeof m.result,
                  "Dez sequências! Que memória musical!");
-        finish(s);
+        finish(s, r);
       } else {
         m.length++;
         m.input = 0;
@@ -614,10 +649,10 @@ Result play(State &s, int input) {
   if ((m.kind == Game::Rps && (m.wins == 3 || m.losses == 3)) ||
       (m.kind == Game::Hide && m.round == 3) ||
       (m.kind != Game::Rps && m.kind != Game::Hide && m.round == 5))
-    finish(s);
+    finish(s, r);
   return {true, m.result};
 }
-void tickGame(State &s, uint32_t ms) {
+void tickGame(State &s, uint32_t ms, const Rules &r) {
   auto &m = s.match;
   if (!m.active)
     return;
@@ -661,7 +696,7 @@ void tickGame(State &s, uint32_t ms) {
     if (m.elapsed >= 30000) {
       snprintf(m.result, sizeof m.result,
                "Cesta cheia: %d frutas em 30 segundos!", int(m.score));
-      finish(s);
+      finish(s, r);
     }
   }
 }
@@ -673,7 +708,7 @@ void cancelGame(State &s) {
   log(s, "Brincadeira interrompida, sem penalidade.");
 }
 bool valid(const State &s, uint32_t profile) {
-  if (s.format != 1 || s.profile != profile || !s.id || s.family >= 8 ||
+  if (s.format != 2 || s.profile != profile || !s.id || s.family >= 8 ||
       s.palette >= 4 || s.detail >= 2 || s.personality >= 3 ||
       unsigned(s.stage) > 5 || s.form > 7 || unsigned(s.mode) > 2 ||
       s.sleepHour > 23 || s.wakeHour > 23 || s.logHead >= 40 ||

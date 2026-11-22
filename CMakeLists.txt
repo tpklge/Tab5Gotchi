@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-set(PROJECT_VER "0.1.0")
+set(PROJECT_VER "0.2.1")
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(tab5gotchi)
 # Same FatFs exFAT ABI for BSP and application, without editing the SDK.

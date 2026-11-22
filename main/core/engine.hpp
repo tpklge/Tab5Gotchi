@@ -72,7 +72,7 @@ struct Match {
   char result[128];
 };
 struct State {
-  uint32_t format = 1, profile = 0, sequence = 0;
+  uint32_t format = 2, profile = 0, sequence = 0;
   uint64_t id = 0;
   uint32_t identityRng = 0, eventRng = 0, gameRng = 0;
   char name[49]{};
@@ -97,7 +97,13 @@ struct State {
   Match match{};
   Event events[40]{};
   uint8_t logHead = 0, logCount = 0;
+  uint8_t reservedV1[6]{};
+  uint64_t createdWall = 0, birthWall = 0, endedWall = 0, parents[2]{};
+  uint64_t milestoneAge[6]{}, milestoneWall[6]{};
+  uint16_t activityCredits[28]{};
+  uint8_t gamesSeen = 0;
 };
+static_assert(offsetof(State, createdWall) == 4872, "Stable v1 prefix");
 static_assert(std::is_trivially_copyable<State>::value,
               "Save must be fixed data");
 struct Food {
@@ -114,6 +120,18 @@ struct Rules {
   uint32_t tolerance = 7200, offlineLimit = 43200;
   uint32_t classicRiskHours = 48;
   uint8_t familyCount = 6;
+  uint32_t actionCooldownSeconds = 60, educationCooldownSeconds = 300,
+      rewardCooldownSeconds = 300, actionDurationMs = 1300,
+      exploreDurationMs = 4000, napDurationSeconds = 600;
+  uint16_t activityCap = 40;
+  float tendencyWeights[3]{2, 5, 3};
+  // Each row: primary, secondary, tertiary gain for the action, enum order.
+  float gains[20][3]{{24,5,1},{14,5,1},{6,5,1},{2,0,0},{3,2,0},
+    {3,0,0},{0,0,0},{10,0,0},{0,0,0},{0,0,0},{0,0,0},{100,5,0},
+    {4,0,0},{0,0,0},{18,5,0},{3,1,0},{2,2,0},{4,6,0},{3,2,0},{2,0,0}};
+  float socialMinimumScale = .25f;
+  float gameHappy = 4, gameVictory = 2, gameBond = 2, gameEnergy = 3;
+
 };
 struct Result {
   bool changed;
@@ -124,11 +142,11 @@ State newborn(uint32_t profile, uint32_t seed, uint64_t id,
 void log(State &, const char *);
 void tick(State &, uint64_t milliseconds, const Rules &rules = {});
 void resume(State &, int64_t wallSeconds, const Rules &rules = {});
-Result act(State &, Action, const Food *food = nullptr);
+Result act(State &, Action, const Food *food = nullptr, const Rules &rules = {});
 void evolve(State &, const Rules &rules = {});
 bool startGame(State &, Game, uint8_t pairs = 6);
-Result play(State &, int input);
-void tickGame(State &, uint32_t milliseconds);
+Result play(State &, int input, const Rules &rules = {});
+void tickGame(State &, uint32_t milliseconds, const Rules &rules = {});
 void cancelGame(State &);
 bool victory(const Match &);
 int rps(int user, int pet);

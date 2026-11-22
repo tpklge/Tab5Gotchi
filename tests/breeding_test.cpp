@@ -14,6 +14,7 @@ int main() {
   b.detail = 0;
   for (unsigned seed = 1; seed < 500; seed++) {
     assert(offspring(c, a, b, 2, seed, seed + 100));
+    assert(c.parents[0] == a.id && c.parents[1] == b.id);
     assert(c.stage == Stage::Egg && (c.family == 0 || c.family == 4));
     assert(c.detail == (c.family == 0 ? a.detail : b.detail));
     assert(c.profile == 2 && c.id == seed + 100);

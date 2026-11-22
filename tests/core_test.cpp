@@ -192,7 +192,7 @@ int main() {
   act(bedtime, Action::Wake);
   tick(bedtime, 1500);
   act(bedtime, Action::Sleep);
-  assert(bedtime.tendencies[0] == tendency + 4);
+  assert(bedtime.tendencies[0] == tendency + 5);
   auto queued = seeded;
   queued.tendencies[0] = 1;
   queued.tendencies[1] = 200;

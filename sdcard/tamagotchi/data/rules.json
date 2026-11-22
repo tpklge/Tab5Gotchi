@@ -15,5 +15,126 @@
   "offline_tolerance_seconds": 7200,
   "offline_limit_seconds": 43200,
   "checkpoint_seconds": 60,
-  "classic_risk_hours": 48
+  "classic_risk_hours": 48,
+  "social_minimum_scale": 0.25,
+  "action_cooldown_seconds": 60,
+  "education_cooldown_seconds": 300,
+  "reward_cooldown_seconds": 300,
+  "action_duration_ms": 1300,
+  "explore_duration_ms": 4000,
+  "nap_duration_seconds": 600,
+  "evolution_activity_cap": 40,
+  "evolution_weights": [
+    2,
+    5,
+    3
+  ],
+  "game_reward": [
+    4,
+    2,
+    2,
+    3
+  ],
+  "action_gains": [
+    [
+      24,
+      5,
+      1
+    ],
+    [
+      14,
+      5,
+      1
+    ],
+    [
+      6,
+      5,
+      1
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      3,
+      2,
+      0
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      10,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      100,
+      5,
+      0
+    ],
+    [
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      18,
+      5,
+      0
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      2,
+      2,
+      0
+    ],
+    [
+      4,
+      6,
+      0
+    ],
+    [
+      3,
+      2,
+      0
+    ],
+    [
+      2,
+      0,
+      0
+    ]
+  ]
 }

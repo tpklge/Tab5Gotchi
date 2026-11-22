@@ -47,7 +47,7 @@ for name in ['CMakeLists.txt','partitions.csv','sdkconfig.defaults','sdkconfig.e
 extra_lock=ROOT/'private/extras-source/dependencies.lock'
 if extra_lock.exists():source.append((extra_lock,'dependencies-extras.lock'))
 zip_files(DIST/'source.zip',source)
-summary={'version':'0.1.0','target':'esp32p4','type':'application-only','families':6,'forms':48,'eggs':6,'games':8,'content_bytes':sum(e['bytes'] for e in manifest['files']),'immutable_files':len(manifest['files']),'firmware_bytes':app.stat().st_size,'game_assets_embedded':False,'diagnostic_font_in_flash':True,'sd_preserve':['tamagotchi/saves','tamagotchi/album'],'hardware_evidence':'Docs/hardware.md','files':[]}
+summary={'version':data[48:80].split(b'\0')[0].decode('ascii'),'target':'esp32p4','type':'application-only','families':6,'forms':48,'eggs':6,'games':8,'content_bytes':sum(e['bytes'] for e in manifest['files']),'immutable_files':len(manifest['files']),'firmware_bytes':app.stat().st_size,'game_assets_embedded':False,'diagnostic_font_in_flash':True,'sd_preserve':['tamagotchi/saves','tamagotchi/album'],'hardware_evidence':'Docs/hardware.md','files':[]}
 for name in ['tab5gotchi-app.bin','tab5gotchi-extras-app.bin','sdcard.zip','source.zip']:
  p=DIST/name
  if p.exists():summary['files'].append({'path':name,'bytes':p.stat().st_size,'sha256':sha(p)})

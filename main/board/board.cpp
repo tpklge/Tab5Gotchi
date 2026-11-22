@@ -116,8 +116,7 @@ int64_t wall() {
   }
   return time(nullptr);
 }
-int batteryMv() { // INA226 bus-voltage register: 1.25mV per bit; no guessed
-                  // percentage.
+int batteryMv() { // INA226 bus-voltage register: 1.25mV per bit, 2S pack.
   i2c_master_dev_handle_t dev = nullptr;
   i2c_device_config_t cfg{};
   cfg.dev_addr_length = I2C_ADDR_BIT_LEN_7;

@@ -82,8 +82,16 @@ Relatório do aparelho: [Docs/hardware.md](Docs/hardware.md). Matriz de requisit
 
 ## Interface e perfis
 
-A navegação é por toque, sem controles A/B/C. Ajustes está organizado por categorias. Em Perfis, abra um dos três espaços, apague com confirmação ou crie um ovo em espaço vazio. A exclusão arquiva o ciclo antes de liberar o espaço. Nomes usam o teclado original encaixável do Tab5; Enter salva e Esc cancela. A detecção/digitação desse acessório ainda não foi confirmada no teste físico desta revisão.
+A navegação é por toque, sem controles A/B/C. Ajustes está organizado por categorias. Em Perfis, abra um dos três espaços, apague com confirmação ou crie um ovo em espaço vazio. A exclusão arquiva o ciclo antes de liberar o espaço. Nomes usam o teclado original encaixável do Tab5; Enter salva e Esc cancela. O usuário confirmou funcionamento manual do teclado, do touch e reinícios aleatórios pelo botão. Os testes automatizados por USB complementam essa validação.
 
 ## Licenças
 
 Distribuição do projeto sob GPL-3.0 (LICENSE). Código, arte e áudio originais também estão disponíveis sob MIT (LICENSE-MIT); veja THIRD_PARTY_NOTICES.md. Bibliotecas e fonte conservam suas próprias licenças. Este é um projeto independente, sem recursos oficiais do Tamagotchi.
+
+## Versão 0.2.0
+
+Animações guiadas pelos metadados, silhuetas, histórico consultável com aparência e parentesco, descobertas no quintal, contribuições de evolução limitadas por atividade e etapa, ganhos/cooldowns configuráveis, esconde-esconde com objetos e revelação, transições e dia/noite gradual. Bateria com porcentagem aproximada, brilho/volumes com `-`/`+` e apagamento configurável. Saves v1 são migrados para v2 com identidade preservada; mantenha o backup e use o firmware novo para abrir progresso atualizado.
+
+Neste aparelho, a revisão atual usa app2 (slot 2); app1 conserva a versão anterior e app0 conserva Meshtastic. Para instalar uma revisão pelo launcher com backup e verificação, use `tools/deploy_launcher.py` com o jogo já no launcher. `--content` envia recursos alterados e o manifesto por último; `--boot` abre o slot instalado. O script exige a API local do launcher e Python com pyserial. Ele só substitui um slot explicitamente identificado como Tab5Gotchi e recusa um destino de instalação diferente do solicitado. Reorganização, quando necessária, é feita pelo próprio launcher.
+
+`tools/smoke_device.py` verifica UI, migração, tela apagada e checkpoint, opção Nunca e minijogos no perfil corrente, restaurando o tempo de tela ao terminar. `tools/benchmark_device.py` mede uma partida com drenagem contínua da USB. `tools/test_device_resources.py` testa corrupção reversível de recursos e pacote incompatível, com cópia e restauração verificadas dos recursos; não modifica saves diretamente. Esses testes alteram o estado normal do jogo por suas ações. Logs/backups ficam em private/hardware e não entram na distribuição.

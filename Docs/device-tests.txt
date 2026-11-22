@@ -13,3 +13,13 @@ PASS jogo 7 placar 13 0 pontos 13 recompensa única
 PASS: versão final, ABC, cinco reinícios da fruta e recompensa única
 PASS: identidade e partidas preservadas após retorno ao launcher e reinício.
 PASS: bootloader, launcher e Meshtastic iguais ao backup inicial.
+
+REVISÃO 0.2.0
+PASS: migração física de save mantendo identidade.
+PASS: navegação, silhuetas, história/diário e esconde-esconde.
+PASS: tela apagada 65 s com simulação/checkpoint e despertar sem clique subjacente.
+PASS: Nunca durante 33 s; brilho/tempo restaurados.
+PASS: benchmark do Pega-frutinha ~33,07 fps, sem captura durante as janelas completas.
+PASS: corrupção reversível de áudio/imagem detectada, recursos restaurados.
+MANUAL (usuário): teclado, touch e alguns reinícios aleatórios pelo botão.
+PASS: pacote incompatível no hardware, saves com hashes idênticos antes/depois, restauração verificada.

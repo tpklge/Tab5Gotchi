@@ -1,29 +1,35 @@
 {
+  "revision": "0.2.0",
+  "measurement": "Pega-frutinha no Tab5, serial drenada, sem captura durante a janela",
+  "window_seconds": 10,
+  "mixed_initial_window_excluded": true,
+  "samples": 3,
+  "fps": {
+    "min": 33.06687545776367,
+    "max": 33.0670051574707
+  },
+  "uiHz": {
+    "min": 33.86607360839844,
+    "max": 33.866207122802734
+  },
   "internalFree": {
-    "min": 460383,
-    "max": 473107
+    "min": 351247,
+    "max": 351763
   },
   "psramFree": {
-    "min": 29137512,
-    "max": 29424800
+    "min": 29420628,
+    "max": 29420628
   },
   "largest": {
-    "min": 368640,
-    "max": 376832
+    "min": 229376,
+    "max": 229376
   },
   "audioErrors": {
     "min": 0,
     "max": 0
   },
-  "audioBlocks": {
-    "min": 304,
-    "max": 15439
-  },
-  "fps": {
+  "audioResourceErrors": {
     "min": 0,
-    "max": 24.75049591064453
-  },
-  "internalLowWatermark": 402111,
-  "uiStackFreeMin": 7828,
-  "savePayloadBytes": 4872
+    "max": 0
+  }
 }

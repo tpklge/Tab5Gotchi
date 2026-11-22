@@ -59,4 +59,4 @@ Validada por tools/validate_assets.py. RGB565+A8 planar, 96 × 96, 160 ms por po
 | parafim | Ferruvô | 19 | 32 | 4 × 2 por composição |
 | parafim | Ovo | 4 | 32 | 4 × 2 por composição |
 
-48 WAVs PCM mono 22050 Hz. Total do manifesto: 62,962,687 bytes.
+48 WAVs PCM mono 22050 Hz. Total do manifesto: 63,186,284 bytes.

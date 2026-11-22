@@ -14,6 +14,8 @@ bool offspring(State &out, const State &a, const State &b, uint32_t profile,
   out = newborn(profile, seed, id, r);
   Rng rng{out.identityRng};
   const State &parent = rng.uniform(2) ? a : b;
+  out.parents[0] = a.id;
+  out.parents[1] = b.id;
   out.family = parent.family;
   out.palette = parent.palette;
   out.detail = parent.detail;

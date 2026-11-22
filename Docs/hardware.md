@@ -1,3 +1,5 @@
+Estado atual: revisão 0.2.1 no app2; as primeiras seções abaixo preservam ensaios anteriores. Veja a seção final para os resultados desta revisão.
+
 # Validação no Tab5 — 22/11/2026
 
 Firmware padrão instalado e funcionando com o launcher do Paludo. Fonte e dados são do projeto Tab5Gotchi; os documentos originais de concepção foram preservados. O aparelho foi deixado na casa do perfil 1, modo tranquilo, com a mesma identidade e progresso recuperados.
@@ -58,3 +60,25 @@ Os pacotes finais, seus tamanhos comprimidos e SHA-256 constam em dist/manifest.
 A/B/C foi removido na versão atual; as capturas anteriores desse modo são histórico da regressão inicial. Ajustes agora usa categorias e os submenus usam listas. A ficha foi conferida sem sobreposição. Nomes usam o teclado encaixável [A164, conforme documentação oficial](https://docs.m5stack.com/en/tab5/Tab5_Keyboard), sem teclado virtual. O protocolo I²C foi implementado de forma independente, em barramento separado do BSP. O acessório não respondeu à detecção durante esta sessão, portanto a digitação física continua pendente; a tela e seu salvamento foram exercitados.
 
 Perfis: abrir, criar ovo em espaço vazio e apagar com confirmação e arquivo prévio do ciclo. Testes reais cobriram cancelamento, exclusão, reinício mantendo o espaço vazio e nova criação. Os saves do perfil de teste foram preservados em cópia privada e restaurados byte a byte. Capturas atuais: screenshots/ficha-touch.png, ajustes-touch.png, nome-fisico.png e perfil-vazio.png.
+
+## Revisão 0.2.0 — 22/11/2026
+
+Instalações incrementais pelo launcher 0.8.0-rc.2 no slot 2, com backup do aplicativo substituído no SD e cópias locais dos arquivos de saves antes de cada etapa. Na primeira ampliação necessária, o próprio launcher reorganizou sua reserva; nenhuma tabela ou bootloader deste build foi gravado. app0/Meshtastic e app1 anterior foram preservados, conferidos pelo inventário do launcher. O último binário padrão tem **931392 bytes**, SHA-256 `6e601f6547d57fee70bbe5cee24da964bef0176154e54d85f31bc7dc0802d65e`. Extras: **1269904 bytes**, compilado, sem teste entre dois aparelhos.
+
+Resultados novos no Tab5:
+
+- Abertura após migração de State v1 para v2 com mesma identidade, perfil e progresso; sem falha de save.
+- Navegação repetida por casa, álbum, famílias, histórias, ficha do indivíduo e ajustes; capturas reais por USB.
+- Apagamento configurado em 30 s; durante 65 s sem entrada, iluminação em zero, simulação avançando e sequência de checkpoint aumentando. Primeiro toque reacendeu sem abrir o botão sob ele; segundo toque navegou. Brilho e tempo originais restaurados.
+- Nunca manteve a tela ligada durante 33 s. Pega-frutinha e três rodadas de esconde-esconde concluídos; interface e resultados exercitados.
+- Medição sem capturas durante o jogo: aproximadamente 33,07 fps e 33,87 ciclos de UI/s nas janelas completas do Pega-frutinha. A primeira janela mista foi descartada. O erro encontrado de invalidação contínua da iluminação foi corrigido; métricas anteriores a essa correção não representam o build final.
+- Contadores normais de falha do codec e de recursos de áudio em zero. Recursos de áudio e imagem foram corrompidos de forma reversível, mantendo os tamanhos: o áudio foi rejeitado por SHA-256 e a simulação continuou; recursos originais restaurados com leitura de volta e mesmo pet recuperado.
+- O usuário confirmou manualmente teclado, touch e alguns reinícios aleatórios pelo botão. Esses relatos são distintos da entrada LVGL injetada nos ensaios automatizados.
+
+Logs, respostas completas e backups permanecem em private/hardware. As métricas agregadas estão em runtime-metrics.json. Precisão da estimativa da bateria, autonomia, retenção do RTC, audição humana, cortes controlados em fases de escrita e visitas entre dois Tab5 não são considerados aprovados por esses ensaios.
+
+O pacote com engine_api_version incompatível foi ensaiado no aparelho: abertura bloqueada e SHA-256 de todos os arquivos de saves idênticos antes/depois. Os recursos originais foram restaurados com leitura de volta, e o mesmo pet voltou sem erros de recursos. Durante os ensaios, o Wi-Fi do launcher entrou em falha transitória; um reinício via RTS, sem gravação de flash, restabeleceu a conexão. Não foi alterado o firmware do C6.
+
+## Correção de teclado 0.2.1
+
+Atualização pelo launcher no app2 com backup da revisão anterior. Teclado A164 detectado após substituir a sondagem simples pela leitura de identificação com timeout de 50 ms. Teste automatizado do handler HID no Tab5 verificou edição, símbolos, cursor, manutenção do rascunho após duas reconstruções, Enter e Esc; o nome original permaneceu salvo. O usuário confirmou digitação física correta na tela de mudar nome. Logs em private/hardware/keyboard-name-tests.*.

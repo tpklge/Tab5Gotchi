@@ -1,4 +1,7 @@
 #include "store.hpp"
+#include "legacy_state.hpp"
+#include "board/power.hpp"
+#include <algorithm>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
@@ -59,13 +62,24 @@ static bool exists(const std::string &p) {
   struct stat st{};
   return stat(p.c_str(), &st) == 0;
 }
+static bool readState(const std::string &p, State &s) {
+  if (read(p, &s, sizeof s) && valid(s, s.profile)) return true;
+  auto old = std::make_unique<StateV1>();
+  if (!read(p, old.get(), sizeof(StateV1)) || old->format != 1) return false;
+  State migrated{};
+  std::memcpy(static_cast<void *>(&migrated), old.get(), sizeof(StateV1));
+  migrated.format = 2;
+  if (!valid(migrated, migrated.profile)) return false;
+  s = migrated;
+  return true;
+}
 Load Store::load(uint32_t p, State &s) {
   auto scratch = std::make_unique<State[]>(2);
   State &a = scratch[0];
   State &b = scratch[1];
   std::string base = root + "/profile" + std::to_string(p);
-  bool va = read(base + "a.sav", &a, sizeof a) && valid(a, p),
-       vb = read(base + "b.sav", &b, sizeof b) && valid(b, p);
+  bool va = readState(base + "a.sav", a) && valid(a, p),
+       vb = readState(base + "b.sav", b) && valid(b, p);
   if (!va && !vb)
     return exists(base + "a.sav") || exists(base + "b.sav") ||
                    exists(base + "a.sav.tmp") || exists(base + "b.sav.tmp")
@@ -96,7 +110,7 @@ bool Store::save(State &s) {
   return true;
 }
 bool inspectArchive(const std::string &path, State &s) {
-  return read(path, &s, sizeof s) && valid(s, s.profile);
+  return readState(path, s) && valid(s, s.profile);
 }
 bool Store::backup(uint32_t p, const std::string &dst) {
   auto scratch = std::make_unique<State>();
@@ -156,7 +170,7 @@ static bool preserveBeforeRestore(const std::string &root, uint32_t profile) {
 bool Store::restore(uint32_t p, const std::string &src) {
   auto scratch = std::make_unique<State[]>(2);
   State &incoming = scratch[0];
-  if (!read(src, &incoming, sizeof incoming) || !valid(incoming, p))
+  if (!readState(src, incoming) || !valid(incoming, p))
     return false;
   State &old = scratch[1];
   auto loaded = load(p, old);
@@ -167,19 +181,49 @@ bool Store::restore(uint32_t p, const std::string &src) {
                    (incoming.sequence % 2 ? "a.sav" : "b.sav"),
                &incoming, sizeof incoming);
 }
-bool loadSettings(const std::string &p, Settings &s) {
+static bool validSettings(const Settings &s) {
+  return s.version == 2 && s.profile <= 2 && s.master <= 100 &&
+         s.music <= 100 && s.sfx <= 100 && s.brightness >= 10 &&
+         s.brightness <= 100 && s.retro <= 1 && s.abc <= 1 && s.tilt <= 1 &&
+         s.silentSleep <= 1 && power::validTimeout(s.screenTimeoutSeconds);
+}
+static bool readSettings(const std::string &p, Settings &s) {
   Settings a{};
-  bool ok = read(p + "a.cfg", &a, sizeof a);
-  if (!ok)
-    ok = read(p + "b.cfg", &a, sizeof a);
-  if (!ok || a.version != 1 || a.profile > 2 || a.master > 100 ||
-      a.music > 100 || a.sfx > 100 || a.brightness > 100)
+  if (read(p, &a, sizeof a) && validSettings(a)) {
+    s = a;
+    return true;
+  }
+  // The old format has padding where the timeout now lives. Never interpret
+  // those bytes as a timeout, even when both structures have the same size.
+  struct LegacySettings {
+    uint32_t version;
+    uint8_t master, music, sfx, brightness, retro, abc, tilt, profile,
+        silentSleep;
+  } old{};
+  if (!read(p, &old, sizeof old) || old.version != 1 || old.brightness > 100)
+    return false;
+  a = Settings{};
+  a.master = old.master;
+  a.music = old.music;
+  a.sfx = old.sfx;
+  a.brightness = std::max<uint8_t>(10, old.brightness);
+  a.retro = old.retro;
+  a.abc = old.abc;
+  a.tilt = old.tilt;
+  a.profile = old.profile;
+  a.silentSleep = old.silentSleep;
+  if (!validSettings(a))
     return false;
   s = a;
   return true;
 }
+bool loadSettings(const std::string &p, Settings &s) {
+  return readSettings(p + "a.cfg", s) || readSettings(p + "b.cfg", s);
+}
 bool saveSettings(const std::string &p,
                   const Settings &s) { // Keep previous known-good copy first.
+  if (!validSettings(s))
+    return false;
   Settings old{};
   if (loadSettings(p, old) && !write(p + "b.cfg", &old, sizeof old))
     return false;

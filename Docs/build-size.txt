@@ -1,65 +1,74 @@
-Imagem atual: 911296 bytes; slot real 917504 bytes; folga 6208 bytes.
-Detalhes obtidos com esp_idf_size --target esp32p4 --format json --archives.
-Biblioteca                                              Flash RAM estática
-liblvgl__lvgl.a                                        226985          620
-libesp_app_format.a                                     99135           10
-libc.a                                                  78373         1132
-libmain.a                                               63712        13602
-libesp_hw_support.a                                     55070        19899
-libhal.a                                                31194        16210
-libfatfs.a                                              30293          578
-libesp_ipa.a                                            23580            0
-libfreertos.a                                           22024        22963
-libesp_driver_i2s.a                                     19522          384
-libsdmmc.a                                              17414            0
-libesp_system.a                                         16220         4777
-libespressif__bmi270.a                                  13884           40
-libesp_driver_i2c.a                                     13353          776
-libm.a                                                  11766            0
-libheap.a                                               11202         6894
-libspi_flash.a                                          10991         9255
-libesp_driver_sdmmc.a                                   10613          444
-libespressif__m5stack_tab5.a                            10462         1135
-libesp_lcd.a                                            10161          307
-libespressif__esp_codec_dev.a                            9398            4
-libesp_driver_gpio.a                                     9264          334
-libespressif__sensor_hub.a                               8916          170
-libesp_driver_spi.a                                      8162         4244
-liblvgl_port_lib.a                                       5902           46
-libespressif__esp_lcd_ili9881c.a                         5759          203
-libesp_driver_ledc.a                                     5671          182
-libesp_mm.a                                              5391         2098
-libjson.a                                                5384           20
-libesp_ringbuf.a                                         5176         4694
-libvfs.a                                                 5169          236
-libstdc++.a                                              4461           57
-libesp_psram.a                                           4039         2776
-libesp_driver_sdspi.a                                    4029           17
-libesp_driver_usb_serial_jtag.a                          4018          143
-libespressif__esp_lcd_touch_gt911.a                      3667            0
-libnewlib.a                                              3655         2228
-libbootloader_support.a                                  3634          774
-libesp_event.a                                           3060            0
-libespressif__esp_io_expander.a                          3046            0
-libmbedcrypto.a                                          2945           40
-libespressif__esp_lcd_st7123.a                           2581          422
-libesp_timer.a                                           2378          918
-liblog.a                                                 2208          662
-libsoc.a                                                 2001            0
-libespressif__esp_io_expander_pi4ioe5v6408.a             1948            0
-libespressif__esp_lcd_touch_st7123.a                     1867            0
-libesp_common.a                                          1840            0
-libesp_partition.a                                       1636            8
-libespressif__esp_lcd_touch.a                            1351            0
-libpthread.a                                             1119           20
-libriscv.a                                               1076         1456
-libapp_update.a                                           832            4
-libesp_rom.a                                              827          746
-libcxx.a                                                  762           28
-libgcc.a                                                  550            0
-libesp_vfs_console.a                                      536           16
-libefuse.a                                                268            0
-libesp_security.a                                         160            4
-libnvs_flash.a                                             26            4
-libesp_pm.a                                                18           12
-libnvs_sec_provider.a                                       2            0
+Total sizes:
+Used stat D/IRAM:  127296 bytes ( 449168 remain, 22.1% used)
+      .data size:   23365 bytes
+      .bss  size:   20696 bytes
+      .text size:   83232 bytes
+           other:       3 bytes
+Used Flash size :  825716 bytes
+           .text:  658132 bytes
+         .rodata:  167056 bytes
+Total image size:  932313 bytes (.bin may be padded larger)
+Per-archive contributions to ELF file:
+            Archive File DRAM .data & 1.data .tcm.data DRAM .bss .tcm.text IRAM0 .text ram_st_total Flash .text & .rodata & .appdesc & .init_array flash_total
+         liblvgl__lvgl.a         80        0         0       540         0           0          620      209430     17775          0             0      227285
+     libesp_app_format.a          0        0         0        10         0           0           10         502    100517        256             8      101283
+               libmain.a       7832        0         0     11845         0           0        19677       73190      1440          0             8       82470
+                  libc.a        364        0         0       768         0           0         1132       73020      5029          0             0       78413
+     libesp_hw_support.a       4006        0        60       239        44       15550        19899       31850      3540          0            20       55070
+                libhal.a       6516        0         0         8         0        9686        16210       14268       724          0             0       31194
+              libfatfs.a          8        0         0       570         0           0          578       28758      1527          0             0       30293
+            libesp_ipa.a          0        0         0         0         0           0            0       23276       222          0             0       23498
+           libfreertos.a         32        0         0      4173         0       18758        22963        1576      1658          0             0       22024
+     libesp_driver_i2s.a         48        0         0         0         0         336          384       18272       866          0             0       19522
+              libsdmmc.a          0        0         0         0         0           0            0       15988      1426          0             0       17414
+         libesp_system.a        504        0         0       301         0        3972         4777       11190       498          0            56       16220
+  libespressif__bmi270.a         36        0         0         4         0           0           40        4890      8946          0             0       13872
+     libesp_driver_i2c.a          0        0         0        40         0         736          776       12130       487          0             0       13353
+                  libm.a          0        0         0         0         0           0            0       11630       136          0             0       11766
+               libheap.a         12        0         0         8         0        6874         6894        3514       738          0            64       11202
+          libspi_flash.a       1051       76         0        16         0        8112         9255        1312       440          0             0       10991
+   libesp_driver_sdmmc.a        440        0         0         4         0           0          444        9638       535          0             0       10613
+libespressif__m5stack_ta       1000        0         0       135         0           0         1135        4804      4664          0             0       10468
+            libesp_lcd.a        103        0         0         0         0         204          307        9116       738          0             0       10161
+libespressif__esp_codec_          0        0         0         4         0           0            4        9330        68          0             0        9398
+    libesp_driver_gpio.a         36        0         0         0         0         298          334        8176       754          0             0        9264
+libespressif__sensor_hub         92        0         0        24         0          54          170        8154       616          0             0        8916
+     libesp_driver_spi.a        116        0         0        12         0        4116         4244        3502       428          0             0        8162
+      liblvgl_port_lib.a          0        0         0        32         0          14           46        5480       408          0             0        5902
+libespressif__esp_lcd_il        144        0         0        59         0           0          203        2322      3293          0             0        5759
+    libesp_driver_ledc.a          8        0         0        44         0         130          182        5284       249          0             0        5671
+               libjson.a         12        0         0         8         0           0           20        5432         0          0             0        5444
+             libesp_mm.a        646        0         0        88         0        1364         2098        3084       297          0             0        5391
+        libesp_ringbuf.a          0        0         0         0         0        4694         4694           0       482          0             0        5176
+                libvfs.a        192        0         0        44         0           0          236        4834       135          0             8        5169
+             libstdc++.a          8        0         0        49         0           0           57        3864       581          0             8        4461
+          libesp_psram.a         10        0         0        62         0        2704         2776        1208       109          0             8        4039
+   libesp_driver_sdspi.a          0        0         0        17         0           0           17        3746       283          0             0        4029
+libesp_driver_usb_serial         56        0         0        17         0          70          143        3660       216          0            16        4018
+libespressif__esp_lcd_to          0        0         0         0         0           0            0        3364       303          0             0        3667
+             libnewlib.a        172        0         0       200         0        1856         2228        1516        95          0            16        3655
+ libbootloader_support.a          0        0         0         4         0         770          774        2776        88          0             0        3634
+          libesp_event.a          0        0         0         0         0           0            0        2982        78          0             0        3060
+libespressif__esp_io_exp          0        0         0         0         0           0            0        2914       132          0             0        3046
+         libmbedcrypto.a         32        0         0         8         0           0           40        2894       103          0             0        3029
+libespressif__esp_lcd_st        420        0         0         2         0           0          422        1628       533          0             0        2581
+          libesp_timer.a         32        0         0        36         0         850          918        1452        28          0            16        2378
+                liblog.a          8        0         0       272         0         382          662        1770        48          0             0        2208
+                libsoc.a          0        0         0         0         0           0            0           0      2001          0             0        2001
+libespressif__esp_io_exp          0        0         0         0         0           0            0        1792       156          0             0        1948
+libespressif__esp_lcd_to          0        0         0         0         0           0            0        1794        73          0             0        1867
+         libesp_common.a          0        0         0         0         0           0            0          50      1790          0             0        1840
+      libesp_partition.a          0        0         0         8         0           0            8        1534       102          0             0        1636
+libespressif__esp_lcd_to          0        0         0         0         0           0            0        1210       141          0             0        1351
+            libpthread.a         16        0         0         4         0           0           20        1036        67          0             0        1119
+              libriscv.a          0        0         0       512         0         944         1456          82        50          0             0        1076
+         libapp_update.a          0        0         0         4         0           0            4         770        62          0             0         832
+            libesp_rom.a          0        0         0         0         0         746          746          36        45          0             0         827
+                libcxx.a          8        0         0        20         0           0           28         754         0          0             0         762
+                libgcc.a          0        0         0         0         0           0            0         550         0          0             0         550
+    libesp_vfs_console.a          0        0         0        16         0           0           16         356       172          0             8         536
+              libefuse.a          0        0         0         0         0           0            0         244         0          0            24         268
+       libesp_security.a          0        0         0         4         0           0            4         152         0          0             8         160
+          libnvs_flash.a          0        0         0         4         0           0            4          22         0          0             4          26
+             libesp_pm.a          0        0         0         0         0          12           12           6         0          0             0          18
+   libnvs_sec_provider.a          0        0         0         0         0           0            0           2         0          0             0           2

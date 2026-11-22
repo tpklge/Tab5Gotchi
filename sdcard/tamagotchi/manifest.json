@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "content_version": "0.1.0",
+  "content_version": "0.2.0",
   "engine_api_version": 1,
   "families": [
     "capim",
@@ -280,8 +280,8 @@
     },
     {
       "path": "data/rules.json",
-      "bytes": 353,
-      "sha256": "50efd004676151990db7d8689b747b67b6533b8d391f45304f197125b903678e"
+      "bytes": 1524,
+      "sha256": "57297492009365c128b6688c57d97c841d83f4f630ae3e83de3e63ce08c74252"
     },
     {
       "path": "licenses/DejaVu.txt",
@@ -355,8 +355,8 @@
     },
     {
       "path": "pets/brasquito/family.json",
-      "bytes": 14547,
-      "sha256": "a3b17391610a0063f2db873627aa5dad691c9360ee3f7d900e1400e9dbfbf6a3"
+      "bytes": 14754,
+      "sha256": "071ae3df24e4ef7995bb72008f3109846ac6ad1aad0a3714173e9d00c283e6e5"
     },
     {
       "path": "pets/brotito/0.rgb",
@@ -420,8 +420,8 @@
     },
     {
       "path": "pets/brotito/family.json",
-      "bytes": 14494,
-      "sha256": "8be068e0996cde73e5b1a90fb6d7664fc4c8274b96cd25d0f5cce97afee74e35"
+      "bytes": 14701,
+      "sha256": "801ce101aa197f03396609b3487d6fcc4f42d87ab76f021a5fd514026c1a2a33"
     },
     {
       "path": "pets/capim/0.rgb",
@@ -485,8 +485,8 @@
     },
     {
       "path": "pets/capim/family.json",
-      "bytes": 14466,
-      "sha256": "1f1790a603aafb8898067f43a8b777de64c819a9490b82881b5f90e51cf432a4"
+      "bytes": 14673,
+      "sha256": "3166d3ebb13bcda369e076be953bf610844e8fb17be9ddac6e5f90d74e88758f"
     },
     {
       "path": "pets/gotim/0.rgb",
@@ -550,8 +550,8 @@
     },
     {
       "path": "pets/gotim/family.json",
-      "bytes": 14466,
-      "sha256": "c16346c4ecf773317ba97ebd55491f8f5846a9c1091eeba94fe194d07d034afb"
+      "bytes": 14673,
+      "sha256": "c9a3dd7cc53dd8e95a3ff66f596d82f298c33f46c27f3f554f62ac389198a7e4"
     },
     {
       "path": "pets/nuvito/0.rgb",
@@ -615,8 +615,8 @@
     },
     {
       "path": "pets/nuvito/family.json",
-      "bytes": 14473,
-      "sha256": "80aff935c235567173f6deab2df072f5a9c6b8ad9e87dbdaf99230d24b1b67f5"
+      "bytes": 14680,
+      "sha256": "9335fe2daeaeeb747bfb60b3bac17d922fb3fccc27a978fd4e8d345acdd9679d"
     },
     {
       "path": "pets/parafim/0.rgb",
@@ -680,8 +680,8 @@
     },
     {
       "path": "pets/parafim/family.json",
-      "bytes": 14498,
-      "sha256": "66c9fc65ee78a4ce94090219e5db6cbadf49c25fa453cd1468d7b930aa4f7e9a"
+      "bytes": 14705,
+      "sha256": "0589ff8ce07b71fa84d2c1235069506a45765bac2455295a1bbdd135a847c0ff"
     },
     {
       "path": "scenes/album.rgb",
@@ -912,6 +912,36 @@
       "path": "ui/fruit.rgb",
       "bytes": 3072,
       "sha256": "e8d3e0358f8a854c3f56112f9d2e1811bcb499d8e153094d3df1503a6bf59933"
+    },
+    {
+      "path": "ui/hide0.rgb",
+      "bytes": 36864,
+      "sha256": "d1830137bf36a27570b54a98ebac2341b28bbcbc3990ce3c6bd83f2bb3b1fa5c"
+    },
+    {
+      "path": "ui/hide1.rgb",
+      "bytes": 36864,
+      "sha256": "8e685570b3e005ad4132ec95cb487c30ad82e6680bb8c0dec54d0b32c28fdb23"
+    },
+    {
+      "path": "ui/hide2.rgb",
+      "bytes": 36864,
+      "sha256": "f8fcc254aa643acb8a77842df86c736fc3c01a08bc3f82985c2c56f1147f5c12"
+    },
+    {
+      "path": "ui/hide3.rgb",
+      "bytes": 36864,
+      "sha256": "efa85c7d0197a811469b61583e26bef34ed563fb0bd5562984ca4eebe519edaa"
+    },
+    {
+      "path": "ui/hide4.rgb",
+      "bytes": 36864,
+      "sha256": "614f527420b273ffe529ae80e5e1a4946879aba309032a83babb008b9f20ebf8"
+    },
+    {
+      "path": "ui/hide5.rgb",
+      "bytes": 36864,
+      "sha256": "f43c4078287c063be4043620c1d87e134d06de03cddbfec4d4265bcd6fcbe3d1"
     },
     {
       "path": "ui/strings.json",

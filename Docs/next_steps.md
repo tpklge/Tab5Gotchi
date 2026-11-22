@@ -1,10 +1,15 @@
-# Continuidade
+# Continuidade — revisão 0.2.1
 
-O núcleo está implementado, compilado, instalado e testado no Tab5. Entrega em dist e evidências em hardware.md. Tab5Gotchi já ocupa app1: não repetir instalação sem conferir inventário. Para atualizar, usar somente o aplicativo pelo launcher ou tools/flash_app.py após ler o mapa real. Nunca gravar a tabela/bootloader do build por cima do launcher.
+A revisão nova é instalada pelo launcher no slot 2. Slot 0 (Meshtastic) e slot 1 anterior são preservados. Saves passaram a v2; não abra progresso novo com o aplicativo antigo do slot 1. Os backups antes das etapas estão em private/hardware/stage-* e os binários substituídos têm backup do próprio launcher no SD. Não instale bootloader/tabela gerados pelo projeto.
 
-1. Validar manualmente toque e som; medir autonomia e RTC sem alimentação, e ensaiar cortes de energia com progresso isolado.
-2. Medir e otimizar apresentação até 30 fps sem consultas USB/capturas; a regressão instrumentada atingiu aproximadamente 25 fps no jogo de frutas.
-3. Com dois aparelhos e slot adequado, validar a variante extras em rede local e o fluxo completo de visitas/presentes. Nenhuma atualização do firmware do C6 é feita pelo jogo.
-4. Para conteúdo novo, editar assets_src/generate.py, gerar, validar e copiar seletivamente, preservando saves/álbum e IDs existentes. Mudança do layout binário de State exige versão e migração explícita.
+As pendências de software auditadas foram tratadas nesta revisão; veja status.md, architecture.md, requirements.md e os relatórios de testes. Pacotes são regenerados por tools/package.py, incluindo checksums e sem progresso pessoal.
 
-Backup integral e logs pessoais ficam em private/hardware, excluídos dos pacotes. Os documentos originais de concepção permanecem em Docs.
+Pendências de validação física:
+
+1. Medir autonomia e comparar tensão/porcentagem aproximada com instrumento e diferentes estados de carga. Não há previsão de autonomia no jogo.
+2. Verificar RTC após retirada total de alimentação.
+3. Ensaiar cortes controlados em diferentes fases de gravação com perfil de teste e backup. O usuário já confirmou alguns reinícios aleatórios pelo botão, teclado e touch.
+4. Validar visitas/presentes da variante extras entre dois Tab5. O protocolo tem teste entre dois processos host; não há integração física entre dois aparelhos comprovada.
+5. Avaliar audição/qualidade acústica. Contadores do codec passaram; isso não comprova a percepção sonora humana.
+
+Para novo conteúdo, use tools/generate_assets.py (inclui assets_src/enhance.py) e tools/validate_assets.py. Preserve IDs e diretórios saves/album. Para mudança de payload persistente, acrescente migração explícita e testes antes da próxima instalação.

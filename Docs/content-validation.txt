@@ -1,0 +1,3 @@
+PASS: geração completa reproduzível em duas execuções consecutivas.
+Manifest SHA-256: 42fd0cee05b926682bca78fc68bded123ddd2867dee4bde419a27c48404f9f07
+185 arquivos imutáveis; 54 formas/ovos; 48 WAVs; validador aprovado.

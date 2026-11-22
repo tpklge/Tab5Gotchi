@@ -18,6 +18,8 @@ void voice(const std::string &);
 void stopAudio();
 unsigned audioBlocks();
 unsigned audioErrors();
+unsigned audioResourceErrors();
+void assetValidator(bool (*)(const std::string &));
 void music(const std::string &);
 void sound(const std::string &);
 void volume(int master, int music, int effects);

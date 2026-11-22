@@ -16,9 +16,10 @@ public:
   bool restore(uint32_t profile, const std::string &source);
 };
 struct Settings {
-  uint32_t version = 1;
+  uint32_t version = 2;
   uint8_t master = 55, music = 30, sfx = 65, brightness = 70, retro = 0,
           abc = 0, tilt = 1, profile = 0, silentSleep = 1;
+  uint16_t screenTimeoutSeconds = 120; // 0 = always on; 30-second steps.
 };
 bool loadSettings(const std::string &, Settings &);
 bool saveSettings(const std::string &, const Settings &);

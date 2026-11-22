@@ -1,5 +1,7 @@
 #include "app.hpp"
+#include "keyboard.hpp"
 #include "board/board.hpp"
+#include "board/power.hpp"
 #include "cJSON.h"
 #include "core/engine.hpp"
 #include "driver/i2c_master.h"
@@ -14,12 +16,15 @@
 #include <array>
 #include <cstdio>
 #include <cstring>
+#include <cmath>
 #include <ctime>
 #include <dirent.h>
 #if CONFIG_GOTCHI_LAN
 #include "extensions/lan.hpp"
 #endif
 #include <memory>
+#include <map>
+#include <set>
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -32,7 +37,11 @@ static const char *families[] = {"capim",  "brotito", "brasquito", "gotim",
 static const char *scenes[] = {"casa",     "cozinha", "banheiro", "banho",
                                "quarto",   "quintal", "cuidados", "jogos",
                                "bercario", "album"};
-static lv_obj_t *nameField = nullptr;
+static lv_obj_t *nameField = nullptr, *keyboardLabel = nullptr;
+static std::string nameDraft;
+static int32_t nameCursor = LV_TEXTAREA_CURSOR_LAST;
+static keyboard::Decoder keyboardDecoder;
+static void nameKey(uint8_t modifiers, uint8_t usage);
 static lv_obj_t *homeBars[4]{}, *homeLabels[4]{};
 static bool keyboardOnline = false;
 static unsigned keyboardEvents = 0;
@@ -40,6 +49,22 @@ static bool profileVacant = false;
 static State state;
 static Settings settings;
 static Rules rules;
+struct FormAsset {
+  std::string file;
+  int width = 96, height = 96, frames = 32, anchorX = 48, anchorY = 81;
+  unsigned frameMs = 160;
+  std::map<std::string, std::vector<unsigned>> animations;
+};
+static std::array<std::array<FormAsset, 9>, 8> formAssets;
+static std::map<std::string, std::string> resourceHashes;
+static std::set<std::string> verifiedAssets;
+static unsigned checkpointSeconds = 60;
+static unsigned currentPose = ~0u;
+static int dayOpacity = -1;
+static std::vector<std::string> historyFiles;
+static size_t historyPage = 0;
+static std::unique_ptr<State> historical;
+
 static Store store(std::string(ROOT) + "/saves");
 static std::array<std::array<std::string, 8>, 8> names;
 static std::array<std::string, 8> familyIds;
@@ -58,11 +83,18 @@ static bool lastEgg = false;
 static lv_obj_t *screen, *header, *footer, *sceneImage, *petImage, *panel,
     *message, *status, *gameArea, *night, *foreground, *toyImage;
 static lv_obj_t *clockLabel = nullptr, *batteryLabel = nullptr;
+static lv_obj_t *batteryDetails = nullptr;
+static lv_obj_t *wakeShield = nullptr;
+static bool screenOff = false;
+static int appliedBrightness = 70;
 static lv_group_t *group;
 static lv_font_t font, smallFont;
 static std::vector<uint8_t> smallFontBytes;
 static std::vector<uint8_t> fallingFruit, basketSprite;
 static lv_image_dsc_t fallingDsc{}, basketDsc{};
+static std::array<std::vector<uint8_t>, 6> hideArt;
+static std::array<lv_image_dsc_t, 6> hideDsc;
+static bool pageTransition = false;
 static std::array<std::vector<uint8_t>, 8> careIcons;
 static std::array<lv_image_dsc_t, 8> careDsc;
 static int64_t voiceAt = 0;
@@ -79,13 +111,73 @@ static bool rebuildGame = true;
 static int lastPhase = -1, lastFirst = -2, lastShow = -1;
 static lv_obj_t *fruitObj = nullptr, *basketObj = nullptr;
 static uint64_t nowSim = 0;
-static unsigned renderedFrames = 0;
+static unsigned renderedFrames = 0, uiTicks = 0;
+static float measuredUiHz = 0;
 static float measuredFps = 0;
 static int64_t fpsStart = 0;
 static lv_indev_t *testPointer = nullptr;
 static lv_point_t testPoint{};
 static int64_t testRelease = 0;
 static unsigned memoryPairs = 6;
+static std::string path(const std::string &);
+static void applyBrightness() {
+  int wanted = screenOff ? 0 : settings.brightness;
+  if (wanted != appliedBrightness &&
+      bsp_display_brightness_set(wanted) == ESP_OK)
+    appliedBrightness = wanted;
+}
+static std::string batteryText(bool details = false) {
+  int percent = power::batteryPercent(battery);
+  if (!details)
+    return percent < 0 ? "Bat.: --"
+                      : "Bat.: ~" + std::to_string(percent) + "%" +
+                            (percent <= 15 ? " !" : "");
+  char text[160];
+  if (percent < 0) {
+    if (battery >= 0)
+      snprintf(text, sizeof text,
+               "Bateria: leitura indisponível (%.2f V).", battery / 1000.);
+    else
+      snprintf(text, sizeof text, "Bateria: leitura indisponível.");
+  } else
+    snprintf(text, sizeof text, "Bateria: ~%d%% • %.2f V%s", percent,
+             battery / 1000., percent <= 15 ? " • bateria baixa" : "");
+  return text;
+}
+static void refreshBatteryLabels() {
+  if (batteryLabel)
+    lv_label_set_text(batteryLabel, batteryText().c_str());
+  if (batteryDetails)
+    lv_label_set_text(batteryDetails, batteryText(true).c_str());
+}
+static void displayActivity() {
+  lv_display_trigger_activity(board::display);
+  if (screenOff) {
+    screenOff = false;
+    if (wakeShield) {
+      lv_obj_delete_async(wakeShield);
+      wakeShield = nullptr;
+    }
+    // Keep existing widgets (and any unfinished text entry) unless the game
+    // itself changed while hidden and has already requested a render.
+    refreshBatteryLabels();
+    applyBrightness();
+  }
+}
+static std::string timeoutText() {
+  unsigned seconds = settings.screenTimeoutSeconds;
+  if (!seconds)
+    return "Nunca";
+  return std::to_string(seconds / 60) + " min " +
+         std::to_string(seconds % 60) + " s";
+}
+static void persistSettings() {
+  board::lockIO();
+  bool ok = saveSettings(path("saves/settings"), settings);
+  board::unlockIO();
+  notice = ok ? "Ajustes salvos." : "Falha ao salvar ajustes no microSD.";
+  dirty = true;
+}
 #if CONFIG_GOTCHI_LAN
 static uint32_t ownCode = 0, remoteCode = 0;
 static std::string lanSsid, lanPassword, peerIP;
@@ -94,7 +186,6 @@ static visit::Packet pendingVisit{};
 static bool hasVisit = false, visitorVisible = false;
 static int64_t visitUntil = 0, pendingUntil = 0;
 static bool save();
-static std::string path(const std::string &);
 static void acceptVisit() {
   if (!hasVisit)
     return;
@@ -157,7 +248,32 @@ static std::vector<uint8_t> readFile(const std::string &p,
     fclose(f);
   }
   board::unlockIO();
+  auto expected = resourceHashes.find(p);
+  if (expected != resourceHashes.end()) {
+    uint8_t digest[32];
+    mbedtls_sha256(data.data(), data.size(), digest, 0);
+    char hex[65];
+    for (int i = 0; i < 32; ++i) snprintf(hex + i * 2, 3, "%02x", digest[i]);
+    if (data.empty() || expected->second != hex) {
+      notice = "Recurso inválido: " + p.substr(strlen(ROOT) + 1);
+      faultText = notice;
+      data.clear();
+    } else verifiedAssets.insert(p);
+  }
   return data;
+}
+static bool validateAudioAsset(const std::string &p) {
+  auto expected = resourceHashes.find(p);
+  if (expected == resourceHashes.end()) return false;
+  FILE *f = fopen(p.c_str(), "rb");
+  if (!f) return false;
+  mbedtls_sha256_context ctx; mbedtls_sha256_init(&ctx); mbedtls_sha256_starts(&ctx, 0);
+  uint8_t block[4096], digest[32]; size_t n;
+  while ((n = fread(block, 1, sizeof block, f))) mbedtls_sha256_update(&ctx, block, n);
+  bool good = !ferror(f); fclose(f);
+  mbedtls_sha256_finish(&ctx, digest); mbedtls_sha256_free(&ctx);
+  char hex[65]; for (int i = 0; i < 32; ++i) snprintf(hex + i * 2, 3, "%02x", digest[i]);
+  return good && expected->second == hex;
 }
 static cJSON *json(const std::string &p) {
   auto data = readFile(p);
@@ -199,6 +315,9 @@ static const void *bitmap(lv_font_glyph_dsc_t *d, lv_draw_buf_t *) {
   return fontBytes.data() + 16 + fontCount * 8 + d->gid.index * 36 * 40;
 }
 static bool content() {
+  resourceHashes.clear();
+  verifiedAssets.clear();
+  foods.clear(); decorNames.clear(); gameNames.clear(); instructions.clear();
   auto *j = json(path("manifest.json"));
   if (!j) {
     faultText =
@@ -237,6 +356,9 @@ static bool content() {
       ok = false;
       break;
     }
+    std::string digest = str(entry, "sha256");
+    if (digest.size() != 64) { ok = false; break; }
+    resourceHashes[path(file)] = digest;
     struct stat st{};
     if (stat(path(file).c_str(), &st) ||
         st.st_size != number(entry, "bytes", -1)) {
@@ -284,8 +406,40 @@ static bool content() {
     if (!j)
       return false;
     auto *forms = cJSON_GetObjectItem(j, "forms");
-    for (int i = 0; i < 8; i++)
-      names[f][i] = str(cJSON_GetArrayItem(forms, i), "name");
+    if (cJSON_GetArraySize(forms) != 9) { cJSON_Delete(j); return false; }
+    for (int i = 0; i < 9; i++) {
+      auto *v = cJSON_GetArrayItem(forms, i);
+      if (i < 8) names[f][i] = str(v, "name");
+      auto &asset = formAssets[f][i];
+      asset.file = str(v, "file");
+      asset.width = number(v, "width", 0); asset.height = number(v, "height", 0);
+      asset.frames = number(v, "frames", 0);
+      asset.frameMs = number(v, "frame_ms", 160);
+      auto *anchor = cJSON_GetObjectItem(v, "anchor");
+      asset.anchorX = cJSON_GetNumberValue(cJSON_GetArrayItem(anchor, 0));
+      asset.anchorY = cJSON_GetNumberValue(cJSON_GetArrayItem(anchor, 1));
+      if (asset.width < 1 || asset.width > 192 || asset.height < 1 || asset.height > 192 ||
+          asset.frames < 1 || asset.frames > 128 || size_t(asset.width) * asset.height * asset.frames * 3 > 4 * 1024 * 1024 || asset.frameMs < 40 || asset.frameMs > 2000 ||
+          asset.anchorX < 0 || asset.anchorX > asset.width || asset.anchorY < 0 || asset.anchorY > asset.height ||
+          !resourceHashes.count(path(asset.file)) || str(v, "format") != std::string("RGB565A8_PLANAR")) {
+        cJSON_Delete(j); return false;
+      }
+      asset.animations.clear();
+      auto *animationObject = cJSON_GetObjectItem(v, "animations");
+      if (!cJSON_IsObject(animationObject)) { cJSON_Delete(j); return false; }
+      cJSON *anim;
+      cJSON_ArrayForEach(anim, animationObject) {
+        auto &seq = asset.animations[anim->string];
+        cJSON *pose;
+        cJSON_ArrayForEach(pose, anim) {
+          double index = cJSON_GetNumberValue(pose);
+          if (!cJSON_IsNumber(pose) || !std::isfinite(index) || index < 0 || index >= asset.frames || index != int(index)) { cJSON_Delete(j); return false; }
+          seq.push_back(unsigned(index));
+        }
+        if (seq.empty() || seq.size() > 128) { cJSON_Delete(j); return false; }
+      }
+      if (!asset.animations.count("idle")) { cJSON_Delete(j); return false; }
+    }
     cJSON_Delete(j);
   }
   j = json(path("data/foods.json"));
@@ -332,6 +486,45 @@ static bool content() {
   rules.tolerance = number(j, "offline_tolerance_seconds", 7200);
   rules.offlineLimit = number(j, "offline_limit_seconds", 43200);
   rules.classicRiskHours = number(j, "classic_risk_hours", 48);
+  checkpointSeconds = number(j, "checkpoint_seconds", 60);
+  if (checkpointSeconds < 10 || checkpointSeconds > 3600) { cJSON_Delete(j); return false; }
+  auto bounded = [&](const char *key, unsigned fallback, unsigned lo, unsigned hi) {
+    double value = number(j, key, fallback);
+    if (value < lo || value > hi) ok = false;
+    return unsigned(std::clamp(value, double(lo), double(hi)));
+  };
+  rules.actionCooldownSeconds = bounded("action_cooldown_seconds", 60, 1, 3600);
+  rules.educationCooldownSeconds = bounded("education_cooldown_seconds", 300, 1, 7200);
+  rules.rewardCooldownSeconds = bounded("reward_cooldown_seconds", 300, 1, 7200);
+  rules.actionDurationMs = bounded("action_duration_ms", 1300, 100, 10000);
+  rules.exploreDurationMs = bounded("explore_duration_ms", 4000, 1000, 60000);
+  rules.napDurationSeconds = bounded("nap_duration_seconds", 600, 30, 7200);
+  rules.activityCap = bounded("evolution_activity_cap", 40, 1, 1000);
+  auto *gains = cJSON_GetObjectItem(j, "action_gains");
+  if (gains) {
+    if (cJSON_GetArraySize(gains) != 20) ok = false;
+    for (int i = 0; i < 20; ++i) for (int k = 0; k < 3; ++k) {
+      auto *v = cJSON_GetArrayItem(cJSON_GetArrayItem(gains, i), k);
+      if (!cJSON_IsNumber(v) || v->valuedouble < 0 || v->valuedouble > 100) ok = false;
+      else rules.gains[i][k] = v->valuedouble;
+    }
+  }
+  auto *weights = cJSON_GetObjectItem(j, "evolution_weights");
+  if (weights) for (int i = 0; i < 3; ++i) {
+    auto *v = cJSON_GetArrayItem(weights, i);
+    if (!cJSON_IsNumber(v) || v->valuedouble < 1 || v->valuedouble > 20) ok = false;
+    else rules.tendencyWeights[i] = v->valuedouble;
+  }
+  auto *socialFloor = cJSON_GetObjectItem(j, "social_minimum_scale");
+  rules.socialMinimumScale = cJSON_IsNumber(socialFloor) ? socialFloor->valuedouble : .25;
+  if (rules.socialMinimumScale < 0 || rules.socialMinimumScale > 1) ok = false;
+  auto *reward = cJSON_GetObjectItem(j, "game_reward");
+  float *rewardFields[] = {&rules.gameHappy, &rules.gameVictory, &rules.gameBond, &rules.gameEnergy};
+  if (reward) for (int i = 0; i < 4; ++i) {
+    auto *v = cJSON_GetArrayItem(reward, i);
+    if (!cJSON_IsNumber(v) || v->valuedouble < 0 || v->valuedouble > 20) ok = false;
+    else *rewardFields[i] = v->valuedouble;
+  }
   auto *decay = cJSON_GetObjectItem(j, "decay_per_10_minutes");
   for (int i = 0; i < 5; i++) {
     auto *v = cJSON_GetArrayItem(decay, i);
@@ -339,7 +532,7 @@ static bool content() {
       rules.decay[i] = v->valuedouble;
   }
   cJSON_Delete(j);
-  return gameNames.size() == 8 && decorNames.size() == 12 &&
+  return ok && gameNames.size() == 8 && decorNames.size() == 12 &&
          rules.incubationMin > 0 &&
          rules.incubationMax >= rules.incubationMin &&
          rules.incubationMax <= 3600 && rules.baby > 0 &&
@@ -417,6 +610,17 @@ static lv_obj_t *button(lv_obj_t *parent, const std::string &t, int code, int x,
   }
   return b;
 }
+static void adjustment(lv_obj_t *parent, const std::string &title,
+                       const std::string &value, int minusCode, int y,
+                       bool atMinimum, bool atMaximum) {
+  label(parent, title + ": " + value, 24, y + 18, 600);
+  auto *minus = button(parent, "-", minusCode, 644, y, 96, 76);
+  auto *plus = button(parent, "+", minusCode + 1, 758, y, 96, 76);
+  if (atMinimum)
+    lv_obj_add_state(minus, LV_STATE_DISABLED);
+  if (atMaximum)
+    lv_obj_add_state(plus, LV_STATE_DISABLED);
+}
 static void focusSelected() {
   if (!settings.abc || buttons.empty())
     return;
@@ -457,6 +661,14 @@ static void sfx(const std::string &name) {
 static bool save() {
   if (profileVacant)
     return true;
+  int64_t calendar = board::wall();
+  if (calendar > 1704067200) {
+    if (!state.createdWall && state.stage == Stage::Egg && state.sequence == 0) state.createdWall = calendar;
+    if (!state.birthWall && state.stage == Stage::Baby && state.age < 60000) state.birthWall = calendar;
+    if ((state.retired || state.dead) && !state.endedWall) state.endedWall = calendar;
+    unsigned stage = unsigned(state.stage);
+    if (!state.milestoneWall[stage] && (state.createdWall || state.birthWall)) state.milestoneWall[stage] = calendar;
+  }
   state.lastWall = board::wall() > 1704067200 ? board::wall() : state.lastWall;
   board::lockIO();
   bool ok = store.save(state);
@@ -520,7 +732,7 @@ static int sceneIndex() {
     return 6;
   if (page == "games" || page == "match")
     return 7;
-  if (page == "album" || page == "diary")
+  if (page == "album" || page == "diary" || page == "history" || page == "life")
     return 9;
   if (state.action == Action::Explore)
     return 5;
@@ -545,8 +757,8 @@ struct Thumb {
 };
 static std::array<Thumb, 8> thumbs;
 static void thumb(lv_obj_t *parent, int family, int form, int x, int y,
-                  int scale = 256) {
-  int key = family * 8 + form;
+                  int scale = 256, bool silhouette = false, const State *appearance = nullptr) {
+  int key = family * 9 + form + (silhouette ? 128 : 0) + (appearance ? (appearance->palette + appearance->detail * 4 + (appearance->adult & 3) * 8 + 1) * 256 : 0);
   Thumb *t = nullptr;
   for (auto &v : thumbs)
     if (v.key == key)
@@ -556,23 +768,51 @@ static void thumb(lv_obj_t *parent, int family, int form, int x, int y,
       t = &v;
   if (!t)
     return;
-  if (t->key != key) {
+  if (t->key != key || t->data.empty()) {
     t->key = key;
-    board::lockIO();
-    FILE *f = fopen(path(std::string("pets/") + families[family] + "/" +
-                         std::to_string(form) + ".rgb")
-                        .c_str(),
-                    "rb");
-    t->data.resize(27648);
-    if (!f || fread(t->data.data(), 1, 27648, f) != 27648)
-      t->data.clear();
-    if (f)
-      fclose(f);
-    board::unlockIO();
-    if (t->data.empty())
-      return;
-    imageDescriptor(t->desc, 96, 96, t->data.data(), true);
+    const auto &asset = formAssets[family][form];
+    size_t bytes = asset.width * asset.height * 3;
+    if (!verifiedAssets.count(path(asset.file))) {
+      auto full = readFile(path(asset.file), 4 * 1024 * 1024);
+      if (full.size() != bytes * asset.frames) { t->data.clear(); return; }
+      t->data.assign(full.begin(), full.begin() + bytes);
+    } else {
+      t->data.resize(bytes);
+      board::lockIO(); FILE *f = fopen(path(asset.file).c_str(), "rb");
+      bool good = f && fread(t->data.data(), 1, bytes, f) == bytes;
+      if (f) fclose(f);
+      board::unlockIO();
+      if (!good) { t->data.clear(); return; }
+    }
+    if (appearance) {
+      auto *rgb = reinterpret_cast<uint16_t *>(t->data.data());
+      static const int tint[4][3] = {{0,0,0},{17,4,-3},{-12,12,10},{9,-8,18}};
+      for (int i = 0; i < asset.width * asset.height; ++i) {
+        int r = (rgb[i] >> 11) * 8, g = ((rgb[i] >> 5) & 63) * 4, b = (rgb[i] & 31) * 8;
+        r = std::clamp(r + tint[appearance->palette][0], 0, 255);
+        g = std::clamp(g + tint[appearance->palette][1], 0, 255);
+        b = std::clamp(b + tint[appearance->palette][2], 0, 255);
+        rgb[i] = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
+      }
+      if (appearance->detail && asset.width >= 30 && asset.height >= 62)
+        for (int y = 55; y < 62; ++y) for (int x = 27; x < 30; ++x) {
+          rgb[y * asset.width + x] = 0xff39;
+          t->data[asset.width * asset.height * 2 + y * asset.width + x] = 255;
+        }
+      if (form == 7 && asset.width == 96 && asset.height == 96) {
+        auto overlay = readFile(path(std::string("pets/") + families[family] + "/elder" + std::to_string(appearance->adult & 3) + ".rgb"));
+        if (overlay.size() == 27648) for (int i = 0; i < 9216; ++i) if (overlay[18432 + i]) {
+          t->data[i * 2] = overlay[i * 2]; t->data[i * 2 + 1] = overlay[i * 2 + 1]; t->data[18432 + i] = 255;
+        }
+      }
+    }
+    if (silhouette) {
+      auto *rgb = reinterpret_cast<uint16_t *>(t->data.data());
+      std::fill(rgb, rgb + asset.width * asset.height, uint16_t(0x632c));
+    }
+    imageDescriptor(t->desc, asset.width, asset.height, t->data.data(), true);
   }
+  if (t->data.empty()) { label(parent, "Imagem indisponível", x, y, 180); return; }
   auto *o = lv_image_create(parent);
   lv_image_set_src(o, &t->desc);
   lv_image_set_scale(o, scale);
@@ -605,14 +845,16 @@ static void loadPet() {
   lastForm = visibleForm;
   lastFamily = state.family;
   lastEgg = egg;
-  bank = readFile(path(std::string("pets/") + families[state.family] + "/" +
-                       std::to_string(egg ? 8 : visibleForm) + ".rgb"));
-  if (bank.size() != 32 * 96 * 96 * 3) {
+  currentPose = ~0u;
+  const auto &asset = formAssets[state.family][egg ? 8 : visibleForm];
+  bank = readFile(path(asset.file), 4 * 1024 * 1024);
+  const int pixels = asset.width * asset.height;
+  if (bank.size() != size_t(asset.frames * pixels * 3)) {
     notice = "Sprite ausente: " + std::string(families[state.family]);
     bank.clear();
     return;
   }
-  if (visibleForm == 7 && !egg) {
+  if (visibleForm == 7 && !egg && pixels == 9216) {
     auto overlay =
         readFile(path(std::string("pets/") + families[state.family] + "/elder" +
                       std::to_string(state.adult & 3) + ".rgb"));
@@ -627,10 +869,10 @@ static void loadPet() {
     }
   }
   // Four palettes and two details use one shared geometry bank.
-  for (int frameIndex = 0; frameIndex < 32; frameIndex++) {
-    auto *p = (uint16_t *)(bank.data() + frameIndex * 96 * 96 * 3);
+  for (int frameIndex = 0; frameIndex < asset.frames; frameIndex++) {
+    auto *p = (uint16_t *)(bank.data() + frameIndex * pixels * 3);
     if (settings.retro || state.palette) {
-      for (int i = 0; i < 96 * 96; i++) {
+      for (int i = 0; i < pixels; i++) {
         unsigned r = (p[i] >> 11) * 8, g = ((p[i] >> 5) & 63) * 4,
                  b = (p[i] & 31) * 8;
         if (settings.retro) {
@@ -648,63 +890,54 @@ static void loadPet() {
         p[i] = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
       }
     }
-    if (state.detail) {
+    if (state.detail && asset.width >= 30 && asset.height >= 62) {
       for (int y = 55; y < 62; y++)
         for (int x = 27; x < 30; x++) {
-          p[y * 96 + x] = 0xff39;
-          bank[frameIndex * 96 * 96 * 3 + 96 * 96 * 2 + y * 96 + x] = 255;
+          p[y * asset.width + x] = 0xff39;
+          bank[frameIndex * pixels * 3 + pixels * 2 + y * asset.width + x] = 255;
         }
     }
   }
 }
+static const FormAsset &activeAsset() {
+  return formAssets[state.family][state.stage == Stage::Egg ? 8 : presentationForm(state)];
+}
 static int animationFrame() {
-  unsigned n = frame % 4;
-  if (state.dead)
-    return 12 + frame % 2;
-  if (state.stage == Stage::Egg) {
-    if (state.incubation + 20000 > state.incubationTarget)
-      return 12 + n;
-    return n;
+  const auto &a = activeAsset();
+  std::string name = "idle";
+  if (page == "match" && state.match.kind == Game::Direction && state.match.phase) {
+    auto look = a.animations.find("olhar");
+    if (look != a.animations.end() && look->second.size() >= 3)
+      return look->second[state.match.opponent ? 1 : 2];
   }
-  if (state.pendingEvolution)
-    return 26 + frame % 2;
-  if (page == "match" && state.match.finished)
-    return victory(state.match) ? 10 + frame % 2 : 12 + frame % 2;
-  if (page == "match" && state.match.active && state.match.phase)
-    return state.match.wins >= state.match.losses ? 10 + frame % 2
-                                                  : 12 + frame % 2;
-  if (state.sleeping)
-    return 18 + frame % 2;
-  if (state.sick)
-    return 24 + frame % 2;
-  if (state.bathStep > 0 && state.bathStep < 4)
-    return 20 + frame % 2;
-  if (state.stats[Urgency] > 75)
-    return 22 + frame % 2;
-  if (state.actionLeft) {
+  if (state.stage == Stage::Egg)
+    name = state.incubation + 3000 >= state.incubationTarget ? "eclosao" :
+           state.incubation + 20000 >= state.incubationTarget ? "rachadura" :
+           frame % 40 < 8 ? "balancar" : "idle";
+  else if (state.pendingEvolution) name = "evolucao";
+  else if (state.dead) name = "triste";
+  else if (page == "match" && state.match.finished) name = victory(state.match) ? "vitoria" : "derrota";
+  else if (page == "match" && state.match.phase) name = "olhar";
+  else if (state.sleeping) name = "dormir";
+  else if (state.sick) name = "doente";
+  else if (state.bathStep > 0 && state.bathStep < 4) name = "banho";
+  else if (state.stats[Urgency] > 75) name = "urgencia";
+  else if (state.actionLeft) {
     switch (state.action) {
-    case Action::Meal:
-    case Action::Fruit:
-    case Action::Treat:
-      return 14 + frame % 2;
-    case Action::Water:
-      return 16 + frame % 2;
-    case Action::Pet:
-    case Action::Lullaby:
-      return 26 + frame % 2;
-    case Action::Toilet:
-      return 22 + frame % 2;
-    case Action::Explore:
-      return 4 + frame % 6;
-    default:
-      return 10 + frame % 2;
+    case Action::Meal: case Action::Fruit: case Action::Treat: name = "comer"; break;
+    case Action::Water: name = "beber"; break;
+    case Action::Pet: case Action::Lullaby: name = "carinho"; break;
+    case Action::Toilet: name = "banheiro"; break;
+    case Action::Explore: name = "andar"; break;
+    default: name = "feliz"; break;
     }
-  }
-  if (state.stats[Full] < 20)
-    return 12 + frame % 2;
-  if (frame % 30 == 0)
-    return 28;
-  return n;
+  } else if (state.stats[Full] < 20) name = "fome";
+  else if (state.stats[Energy] < 20) name = "cansaco";
+  else if (frame % 100 < 6) name = "olhar";
+  else if (frame % 40 < 3) name = "piscar";
+  auto it = a.animations.find(name);
+  if (it == a.animations.end()) it = a.animations.find("idle");
+  return it->second[(esp_timer_get_time() / (a.frameMs * 1000ULL)) % it->second.size()];
 }
 static void setPage(const std::string &p) {
   if (profileVacant && p != "profiles" && p != "settings" && p != "audio" &&
@@ -723,13 +956,14 @@ static void setPage(const std::string &p) {
     selectedCode = -1;
   }
   page = p;
+  pageTransition = true;
   dirty = true;
   rebuildGame = true;
   sfx("botao");
 }
 static void doAction(Action a, const Food *f = nullptr) {
   auto before = std::make_unique<State>(state);
-  auto result = act(state, a, f);
+  auto result = act(state, a, f, rules);
   notice = result.message;
   if (result.changed) {
     if (!save()) {
@@ -755,13 +989,21 @@ static void doAction(Action a, const Food *f = nullptr) {
   dirty = true;
 }
 static void render() {
+  if (screenOff)
+    return; // Keep dirty set: rebuild once the user wakes the screen.
+  dayOpacity = -1;
   settings.abc = false;
-  nameField = nullptr;
+  if (nameField && page == "name") {
+    nameDraft = lv_textarea_get_text(nameField);
+    nameCursor = lv_textarea_get_cursor_pos(nameField);
+  }
+  nameField = keyboardLabel = nullptr;
   for (int i = 0; i < 4; i++)
     homeBars[i] = homeLabels[i] = nullptr;
   dirty = false;
-  clockLabel = batteryLabel = nullptr;
+  clockLabel = batteryLabel = batteryDetails = nullptr;
   status = nullptr;
+  message = nullptr;
   petImage = nullptr;
   gameArea = nullptr;
   buttons.clear();
@@ -778,8 +1020,7 @@ static void render() {
                 : "Bichinhos do Tab5 - recuperacao",
           20, 6);
     label(screen,
-          !ready ? "Recursos indisponiveis. Confira o microSD e a pasta "
-                   "tamagotchi. Volte ao launcher para corrigir o pacote."
+          !ready ? "Recursos indisponíveis. " + faultText + " Confira o microSD e a pasta tamagotchi."
                  : faultText,
           50, 150, 1150);
     button(screen, "Tentar novamente", 980, 60, 460, 350, 90);
@@ -801,9 +1042,8 @@ static void render() {
   if (profileVacant)
     snprintf(text, sizeof text, "Perfis • escolha ou crie um amigo");
   label(header, text, 20, 4, 890);
-  snprintf(text, sizeof text, battery > 0 ? "Tab5: %.2f V" : "Tab5: USB",
-           battery / 1000.);
-  batteryLabel = label(header, text, 1000, 4, 230);
+  batteryLabel = label(header, batteryText(), 1000, 10, 230);
+  lv_obj_set_style_text_font(batteryLabel, &smallFont, 0);
   time_t headerTime = board::wall();
   tm headerLocal{};
   localtime_r(&headerTime, &headerLocal);
@@ -837,14 +1077,27 @@ static void render() {
       0);
   lv_obj_remove_flag(night, LV_OBJ_FLAG_CLICKABLE);
   loadPet();
+  if (state.pendingEvolution && page != "match") {
+    auto *halo = box(screen, 330, page == "home" ? 180 : 228, 348, 348, 0xffffff);
+    lv_obj_set_style_bg_opa(halo, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_radius(halo, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_border_width(halo, 5, 0);
+    lv_obj_set_style_border_color(halo, color(0xd5bd72), 0);
+    lv_obj_remove_flag(halo, LV_OBJ_FLAG_CLICKABLE);
+    lv_anim_t glow; lv_anim_init(&glow); lv_anim_set_var(&glow, halo);
+    lv_anim_set_values(&glow, 30, 220); lv_anim_set_duration(&glow, 500);
+    lv_anim_set_playback_duration(&glow, 500); lv_anim_set_repeat_count(&glow, 1);
+    lv_anim_set_exec_cb(&glow, [](void *obj, int32_t value) { lv_obj_set_style_opa(static_cast<lv_obj_t *>(obj), value, 0); });
+    lv_anim_start(&glow);
+  }
   petImage = lv_image_create(screen);
   lv_obj_set_pos(petImage, 360, page == "home" ? 210 : 258);
   lv_image_set_scale(petImage, 768);
   lv_image_set_antialias(petImage, false);
   lv_image_set_pivot(petImage, 0, 0);
   if (!bank.empty()) {
-    imageDescriptor(petDsc, 96, 96,
-                    bank.data() + animationFrame() * 96 * 96 * 3, true);
+    imageDescriptor(petDsc, activeAsset().width, activeAsset().height,
+                    bank.data() + animationFrame() * activeAsset().width * activeAsset().height * 3, true);
     lv_image_set_src(petImage, &petDsc);
   }
   lv_obj_add_flag(petImage, LV_OBJ_FLAG_CLICKABLE);
@@ -1036,8 +1289,8 @@ static void render() {
                                                               : "descobrir"),
                           400 + i, 15 + (i % 4) * 215, 70 + (i / 4) * 170, 205,
                           155, seen ? 0xdce6cf : 0xd9d6cf);
-      if (seen) {
-        thumb(card, albumFamily, i, 54, 0);
+      {
+        thumb(card, albumFamily, i, 54, 0, 256, !seen);
         auto *l = (lv_obj_t *)lv_obj_get_child(card, 0);
         lv_obj_align(l, LV_ALIGN_BOTTOM_MID, 0, 0);
       }
@@ -1048,32 +1301,90 @@ static void render() {
           {"Retrato", 24},
           {"Voltar", 1}});
   } else if (page == "history") {
-    auto *p = box(screen, 36, 94, 886, settings.abc ? 438 : 490, 0xf6eedc);
+    auto *p = box(screen, 36, 94, 886, 490, 0xf6eedc);
     lv_obj_add_flag(p, LV_OBJ_FLAG_SCROLLABLE);
-    int row = 0;
-    label(p, std::string("Amigo atual: ") + state.name, 18, row++ * 90, 840);
+    historyFiles.clear();
+    button(p, std::string("Atual: ") + state.name, 850, 18, 12, 820, 80);
     board::lockIO();
     DIR *d = opendir(path("album").c_str());
     if (d) {
       dirent *e;
-      auto old = std::make_unique<State>();
-      while ((e = readdir(d)) && row < 100) {
+      while ((e = readdir(d)) && historyFiles.size() < 10000) {
         std::string name = e->d_name;
-        if (name.rfind("life-", 0) != 0 ||
-            name.find(".sav") == std::string::npos)
-          continue;
-        if (inspectArchive(path("album/" + name), *old) &&
-            old->profile == settings.profile) {
-          label(p,
-                std::string(old->name) + " • " + stageName(old->stage) + " • " +
-                    std::to_string(old->age / 3600000) + " h",
-                18, row++ * 90, 840);
-        }
+        if ((name.rfind("life-", 0) == 0 || name.rfind("deleted-", 0) == 0) &&
+            name.size() > 4 && name.substr(name.size() - 4) == ".sav") historyFiles.push_back(name);
       }
       closedir(d);
     }
     board::unlockIO();
-    menu({{"Voltar", 17}});
+    std::sort(historyFiles.begin(), historyFiles.end());
+    if (historyPage * 48 >= historyFiles.size()) historyPage = 0;
+    auto old = std::make_unique<State>();
+    int row = 1;
+    for (size_t i = historyPage * 48; i < std::min(historyFiles.size(), (historyPage + 1) * 48); ++i) {
+      board::lockIO();
+      bool good = inspectArchive(path("album/" + historyFiles[i]), *old);
+      board::unlockIO();
+      if (good && old->profile == settings.profile)
+        button(p, std::string(old->name) + " • " + stageName(old->stage) + " • " +
+               std::to_string(old->age / 3600000) + " h", 851 + i - historyPage * 48, 18, 12 + row++ * 96, 820, 80);
+    }
+    std::vector<std::pair<std::string, int>> options;
+    if (historyPage) options.emplace_back("Histórias anteriores", 848);
+    if ((historyPage + 1) * 48 < historyFiles.size()) options.emplace_back("Mais histórias", 849);
+    options.emplace_back("Voltar", 17); menu(options);
+  } else if (page == "life" && historical) {
+    const auto &old = *historical;
+    auto *p = box(screen, 36, 94, 886, 490, 0xf6eedc);
+    auto *details = box(p, 325, 16, 540, 450, 0xf6eedc);
+    lv_obj_add_flag(details, LV_OBJ_FLAG_SCROLLABLE);
+    thumb(p, old.family, old.stage == Stage::Egg ? 8 : old.form, 20, 65, 768, false, &old);
+    label(p, old.name, 20, 360, 300);
+    auto date = [](uint64_t seconds) {
+      if (!seconds) return std::string("não registrado");
+      time_t value = seconds; tm t{}; localtime_r(&value, &t);
+      char line[32]; strftime(line, sizeof line, "%d/%m/%Y %H:%M", &t); return std::string(line);
+    };
+    std::string body = std::string(stageName(old.stage)) + " • " + (old.stage == Stage::Egg ? "família surpresa" : families[old.family]) +
+      "\nIdade: " + std::to_string(old.age / 3600000) + " h" +
+      "\nPaleta: " + std::to_string(old.palette + 1) + " • detalhe: " + std::to_string(old.detail + 1) +
+      "\nOvo: " + date(old.createdWall) + "\nNascimento: " + date(old.birthWall) +
+      "\nFim do ciclo: " + date(old.endedWall);
+    for (int i = 1; i < 6; ++i) if (old.milestoneAge[i] || old.milestoneWall[i])
+      body += "\n" + std::string(stageName(Stage(i))) + ": " +
+              std::to_string(old.milestoneAge[i] / 3600000) + " h • " + date(old.milestoneWall[i]);
+    uint64_t parents[] = {old.parents[0], old.parents[1]};
+    if (!parents[0]) {
+      auto *relation = json(path("album/parents-" + std::to_string(old.id) + ".json"));
+      if (relation) {
+        auto *array = cJSON_GetObjectItem(relation, "parents");
+        for (int i = 0; i < 2; ++i) { auto *v = cJSON_GetArrayItem(array, i); if (cJSON_IsString(v)) parents[i] = strtoull(v->valuestring, nullptr, 10); }
+        cJSON_Delete(relation);
+      }
+    }
+    body += "\n\nOrigem: " + (parents[0] ? std::string("herança local") : "ovo sorteado");
+    for (auto parent : parents) if (parent) body += "\nPai/mãe: " + std::to_string(parent);
+    // Find children across live profiles and preserved archives.
+    auto child = std::make_unique<State>();
+    for (int i = 0; i < 3; ++i) {
+      board::lockIO(); auto result = store.load(i, *child); board::unlockIO();
+      if (result == Load::Ok && (child->parents[0] == old.id || child->parents[1] == old.id))
+        body += "\nDescendente: " + std::string(child->name) + " (perfil " + std::to_string(i + 1) + ")";
+    }
+    std::set<uint64_t> descendants;
+    for (const auto &file : historyFiles) {
+      board::lockIO(); bool found = inspectArchive(path("album/" + file), *child); board::unlockIO();
+      if (found && (child->parents[0] == old.id || child->parents[1] == old.id) && descendants.insert(child->id).second)
+        body += "\nDescendente arquivado: " + std::string(child->name) + " • " + stageName(child->stage);
+    }
+    body += "\n\nDiário preservado:";
+    for (unsigned i = 0; i < old.logCount; ++i) {
+      const auto &event = old.events[(old.logHead + 40 - old.logCount + i) % 40];
+      body += "\n" + std::to_string(event.age / 3600000) + " h: " + event.text;
+    }
+    auto *text = label(details, body, 10, 8, 510);
+    lv_obj_set_style_text_font(text, &smallFont, 0);
+    menu({{"Voltar às histórias", 46}, {"Álbum", 17}});
   } else if (page == "breeding") {
     label(panel,
           "Dois adultos podem originar um ovo no terceiro perfil livre. Não há "
@@ -1103,19 +1414,38 @@ static void render() {
       button(p, titles[i], codes[i], 24 + (i % 2) * 420, 85 + (i / 2) * 122,
              400, 100);
     menu({{"Voltar à casa", 1}});
-  } else if (page == "audio")
-    menu({{"Geral: " + std::to_string(settings.master), 30},
-          {"Música: " + std::to_string(settings.music), 31},
-          {"Efeitos: " + std::to_string(settings.sfx), 32},
-          {"Silêncio no sono", 40},
+  } else if (page == "audio") {
+    auto *p = box(screen, 36, 94, 886, 490, 0xeeeeee);
+    label(p, "Som e volume", 24, 16, 820);
+    const uint8_t values[] = {settings.master, settings.music, settings.sfx};
+    const char *titles[] = {"Geral", "Música", "Efeitos"};
+    for (int i = 0; i < 3; ++i)
+      adjustment(p, titles[i], std::to_string(values[i]) + "%", 830 + i * 2,
+                 86 + i * 110, values[i] == 0, values[i] == 100);
+    menu({{std::string("Silêncio no sono: ") +
+               (settings.silentSleep ? "sim" : "não"), 40},
           {"Voltar", 18}});
-  else if (page == "display")
-    menu({{"Brilho: " + std::to_string(settings.brightness), 33},
-          {"Tema retrô", 34},
-          {"Inclinação", 41},
-          {"Extensões", 48},
-          {"Voltar", 18}});
-  else if (page == "more")
+  } else if (page == "display") {
+    auto *p = box(screen, 36, 94, 886, 490, 0xeeeeee);
+    label(p, "Tela e bateria", 24, 16, 820);
+    adjustment(p, "Brilho", std::to_string(settings.brightness) + "%", 836,
+               80, settings.brightness == 10, settings.brightness == 100);
+    adjustment(p, "Apagar em", timeoutText(), 838, 180,
+               settings.screenTimeoutSeconds == 0,
+               settings.screenTimeoutSeconds == 1800);
+    auto *help = label(p, "Sem uso: 30 s a 30 min; 0 = nunca.\n"
+                          "Toque para reacender. Jogos mantêm a tela ligada.",
+                       24, 274, 830);
+    lv_obj_set_style_text_font(help, &smallFont, 0);
+    batteryDetails = label(p, batteryText(true), 24, 370, 830);
+    lv_obj_set_style_text_font(batteryDetails, &smallFont, 0);
+    auto *hint = label(p, "Porcentagem estimada pela tensão da bateria.",
+                       24, 418, 830);
+    lv_obj_set_style_text_font(hint, &smallFont, 0);
+    menu({{std::string("Tema retrô: ") + (settings.retro ? "sim" : "não"), 34},
+          {std::string("Inclinação: ") + (settings.tilt ? "sim" : "não"), 41},
+          {"Extensões", 48}, {"Voltar", 18}});
+  } else if (page == "more")
     menu({{"Exportar backup", 38}, {"Restaurar backup", 39}, {"Voltar", 18}});
   else if (page == "extras") {
     menu({{"Inclinação", 41},
@@ -1252,10 +1582,14 @@ static void render() {
     lv_obj_set_size(ta, 838, 70);
     lv_textarea_set_one_line(ta, true);
     lv_textarea_set_max_length(ta, 16);
-    lv_textarea_set_text(ta, state.name);
+    lv_textarea_set_text(ta, nameDraft.c_str());
+    lv_textarea_set_cursor_pos(ta, nameCursor);
     nameField = ta;
-    label(p, "Digite no teclado encaixado no Tab5.\nEnter salva • Esc cancela",
+    label(p, "Digite no teclado encaixado no Tab5.\nEnter salva • Esc cancela • Ctrl+A limpa",
           24, 190, 838);
+    keyboardLabel = label(p, keyboardOnline ? "Teclado conectado" : "Procurando teclado encaixado…", 24, 310, 838);
+    lv_obj_set_style_text_font(keyboardLabel, &smallFont, 0);
+    lv_group_focus_obj(ta);
     menu({{"Salvar nome", 82}, {"Cancelar", 16}});
   } else if (page == "confirm") {
     auto *p = box(screen, 36, 150, 886, 350, 0xf6eedc);
@@ -1343,11 +1677,19 @@ static void render() {
   }
   board::mute(settings.silentSleep && state.sleeping);
   board::volume(settings.master, settings.music, settings.sfx);
-  bsp_display_brightness_set(settings.brightness);
+  applyBrightness();
   if (page == "match" && petImage) {
     lv_image_set_scale(petImage, 384);
     lv_obj_set_pos(petImage, 752, 85);
     lv_obj_move_foreground(petImage);
+  }
+  if (message) lv_label_set_text(message, notice.c_str());
+  if (pageTransition && panel) {
+    pageTransition = false;
+    lv_anim_t fade; lv_anim_init(&fade); lv_anim_set_var(&fade, panel);
+    lv_anim_set_values(&fade, 80, 255); lv_anim_set_duration(&fade, 160);
+    lv_anim_set_exec_cb(&fade, [](void *obj, int32_t value) { lv_obj_set_style_opa(static_cast<lv_obj_t *>(obj), value, 0); });
+    lv_anim_start(&fade);
   }
   selected = std::min(selected, int(buttons.size()) - 1);
   focusSelected();
@@ -1358,6 +1700,11 @@ static void gameButton(const std::string &t, int input, int x, int y, int w,
   gameButtons.push_back(b);
 }
 static void renderGame() {
+  if (petImage) {
+    bool hiding = state.match.kind == Game::Hide && state.match.active && !state.match.phase;
+    if (hiding) lv_obj_add_flag(petImage, LV_OBJ_FLAG_HIDDEN);
+    else lv_obj_remove_flag(petImage, LV_OBJ_FLAG_HIDDEN);
+  }
   auto &m = state.match;
   if (gameArea) {
     for (int i = int(buttons.size()) - 1; i >= 0; i--)
@@ -1366,6 +1713,7 @@ static void renderGame() {
         buttonCodes.erase(buttonCodes.begin() + i);
       }
   }
+  if (message) lv_label_set_text(message, notice.c_str());
   rebuildGame = false;
   lastPhase = m.phase > 0;
   lastFirst = m.first;
@@ -1396,6 +1744,11 @@ static void renderGame() {
   if (m.finished) {
     label(gameArea, "Brincadeira concluída!\nObrigado pela companhia.", 80, 150,
           700);
+    if (m.kind == Game::Hide) {
+      const char *objects[] = {"vaso", "árvore", "banco", "caixa", "arbusto", "fonte"};
+      label(gameArea, std::string("Último esconderijo: ") + objects[m.opponent], 50, 245, 780);
+      thumb(gameArea, state.family, state.form, 710, 170, 256);
+    }
     gameButton("Jogar outra vez", 40, 190, 305, 500, 110);
     focusSelected();
     return;
@@ -1479,16 +1832,33 @@ static void renderGame() {
             if (indev) {
               lv_point_t pt;
               lv_indev_get_point(indev, &pt);
-              play(state, std::clamp<int>((pt.x - 46) * 640 / 830, 0, 640));
+              play(state, std::clamp<int>((pt.x - 46) * 640 / 830, 0, 640), rules);
             }
           },
           LV_EVENT_PRESSING, nullptr);
   } else if (m.kind == Game::Hide) {
-    for (int i = 0; i < 6; i++)
-      gameButton((const char *[]){"Vaso", "Árvore", "Banco", "Caixa", "Arbusto",
-                                  "Fonte"}[i],
+    for (int i = 0; i < 6; i++) {
+      gameButton((const char *[]){"Vaso", "Árvore", "Banco", "Caixa", "Arbusto", "Fonte"}[i],
                  i, 20 + (i % 3) * 285, 150 + (i / 3) * 145, 270, 130);
+      auto *target = gameButtons.back();
+      hideArt[i] = readFile(path("ui/hide" + std::to_string(i) + ".rgb"));
+      bool reveal = m.phase && i == m.opponent;
+      if (reveal) thumb(target, state.family, state.form, 135, 0, 256);
+      if (hideArt[i].size() == 128 * 96 * 3) {
+        imageDescriptor(hideDsc[i], 128, 96, hideArt[i].data(), true);
+        auto *prop = lv_image_create(target); lv_image_set_src(prop, &hideDsc[i]);
+        lv_obj_set_pos(prop, 30, -8); lv_obj_remove_flag(prop, LV_OBJ_FLAG_CLICKABLE);
+      } else {
+        auto *missing = label(target, "Imagem ausente", 12, 20, 220);
+        lv_obj_set_style_text_font(missing, &smallFont, 0);
+      }
+      auto *caption = lv_obj_get_child(target, 0);
+      lv_obj_align(caption, LV_ALIGN_BOTTOM_MID, 0, 4);
+      if (m.phase) lv_obj_add_state(target, LV_STATE_DISABLED);
+    }
+
   }
+  if (message) lv_label_set_text(message, notice.c_str());
   rebuildGame = false;
   lastPhase = m.phase > 0;
   lastFirst = m.first;
@@ -1501,6 +1871,10 @@ static void renderGame() {
   focusSelected();
 }
 static void click(int code) {
+  bool waking = screenOff;
+  displayActivity();
+  if (waking)
+    return;
   if (code == 999) {
     if (ready && !fault)
       save();
@@ -1537,6 +1911,38 @@ static void click(int code) {
   }
   if (!ready || fault)
     return;
+  if (code == 848 || code == 849) {
+    if (code == 848 && historyPage) --historyPage;
+    if (code == 849 && (historyPage + 1) * 48 < historyFiles.size()) ++historyPage;
+    dirty = true; return;
+  }
+  if (code >= 850 && code <= 898) {
+    historical = std::make_unique<State>();
+    if (code == 850) *historical = state;
+    else {
+      size_t index = code - 851 + historyPage * 48;
+      if (index >= historyFiles.size()) return;
+      board::lockIO(); bool ok = inspectArchive(path("album/" + historyFiles[index]), *historical); board::unlockIO();
+      if (!ok || historical->profile != settings.profile) { notice = "História indisponível."; dirty = true; return; }
+    }
+    setPage("life"); return;
+  }
+  if (code >= 830 && code <= 839) {
+    int direction = code % 2 ? 1 : -1;
+    if (code <= 837) {
+      uint8_t *values[] = {&settings.master, &settings.music, &settings.sfx,
+                           &settings.brightness};
+      int index = (code - 830) / 2;
+      *values[index] = std::clamp(int(*values[index]) + direction * 5,
+                                 index == 3 ? 10 : 0, 100);
+      board::volume(settings.master, settings.music, settings.sfx);
+      applyBrightness();
+    } else
+      settings.screenTimeoutSeconds = std::clamp(
+          int(settings.screenTimeoutSeconds) + direction * 30, 0, 1800);
+    persistSettings();
+    return;
+  }
   if (code == 950) {
     if (buttons.empty())
       return;
@@ -1603,7 +2009,7 @@ static void click(int code) {
       rebuildGame = true;
       return;
     }
-    auto result = play(state, code - 700);
+    auto result = play(state, code - 700, rules);
     notice = result.message;
     if (result.changed) {
       save();
@@ -1731,14 +2137,15 @@ static void click(int code) {
     setPage("display");
     break;
   case 82:
-    if (nameField && strlen(lv_textarea_get_text(nameField))) {
+    if (page == "name" && nameField && strlen(lv_textarea_get_text(nameField))) {
       snprintf(state.name, sizeof state.name, "%s",
                lv_textarea_get_text(nameField));
-      save();
-      setPage("info");
+      if (save()) setPage("info");
     }
     break;
   case 23:
+    nameDraft = state.name;
+    nameCursor = LV_TEXTAREA_CURSOR_LAST;
     setPage("name");
     break;
   case 24: {
@@ -1770,18 +2177,6 @@ static void click(int code) {
     break;
   case 29:
     setPage("decor");
-    break;
-  case 30:
-    settings.master = ((settings.master / 10 + 1) % 11) * 10;
-    break;
-  case 31:
-    settings.music = ((settings.music / 10 + 1) % 11) * 10;
-    break;
-  case 32:
-    settings.sfx = ((settings.sfx / 10 + 1) % 11) * 10;
-    break;
-  case 33:
-    settings.brightness = std::max(10, (settings.brightness + 10) % 110);
     break;
   case 34:
     settings.retro = !settings.retro;
@@ -2020,14 +2415,8 @@ static void click(int code) {
   default:
     break;
   }
-  if ((code >= 30 && code <= 35) || code == 40 || code == 41) {
-    board::lockIO();
-    bool ok = saveSettings(path("saves/settings"), settings);
-    board::unlockIO();
-    if (!ok)
-      notice = "Falha ao salvar ajustes.";
-    dirty = true;
-  }
+  if ((code >= 34 && code <= 35) || code == 40 || code == 41)
+    persistSettings();
 }
 static void diagnostics(bool automatic = false) {
   printf("METRICS fps=%.2f audio_blocks=%u audio_errors=%u save_bytes=%u "
@@ -2046,7 +2435,18 @@ static void diagnostics(bool automatic = false) {
   cJSON_AddBoolToObject(j, "fault", fault);
   n("keyboardConnected", keyboardOnline);
   n("keyboardEvents", keyboardEvents);
+  cJSON_AddStringToObject(j, "name", state.name);
+  if (nameField && page == "name") cJSON_AddStringToObject(j, "nameDraft", lv_textarea_get_text(nameField));
   n("profileVacant", profileVacant);
+  n("stateFormat", state.format);
+  n("currentPose", currentPose);
+  n("checkpointSeconds", checkpointSeconds);
+  n("batteryMv", battery);
+  n("batteryPercent", power::batteryPercent(battery));
+  n("screenOff", screenOff);
+  n("screenTimeoutSeconds", settings.screenTimeoutSeconds);
+  n("brightness", settings.brightness);
+  n("appliedBrightness", appliedBrightness);
   n("profile", settings.profile);
   char id[32];
   snprintf(id, sizeof id, "%llu", state.id);
@@ -2091,7 +2491,9 @@ static void diagnostics(bool automatic = false) {
   n("largest", heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
   n("audioBlocks", board::audioBlocks());
   n("audioErrors", board::audioErrors());
+  n("audioResourceErrors", board::audioResourceErrors());
   n("fps", measuredFps);
+  n("uiHz", measuredUiHz);
   auto *stats = cJSON_AddArrayToObject(j, "stats");
   for (float v : state.stats)
     cJSON_AddItemToArray(stats, cJSON_CreateNumber(v));
@@ -2145,6 +2547,11 @@ static void console() {
           testRelease = esp_timer_get_time() + 150000;
           printf("GOTCHI {\"tap\":true}\n");
         }
+      } else if (line.rfind("gotchi key ", 0) == 0) {
+        unsigned modifiers = 0, usage = 0;
+        bool ok = sscanf(line.c_str() + 11, "%u %u", &modifiers, &usage) == 2 && modifiers <= 255 && usage <= 255;
+        if (ok) nameKey(modifiers, usage);
+        printf("GOTCHI {\"key\":%s}\n", ok ? "true" : "false");
       } else if (line == "gotchi status")
         diagnostics();
       else if (line == "gotchi screenshot") {
@@ -2164,113 +2571,89 @@ static void console() {
       line += char(ch);
   }
 }
-// Independent implementation of the A164 I2C HID register protocol.
+// A164 register protocol: EVENT_NUM is a queue count; reading HID_EVENT pops it.
+// https://docs.m5stack.com/en/tab5/Tab5_Keyboard
+static void nameKey(uint8_t modifiers, uint8_t usage) {
+  auto key = keyboardDecoder.decode(modifiers, usage);
+  if (key.kind == keyboard::Kind::Ignore) return;
+  bool waking = screenOff;
+  displayActivity();
+  if (waking || !nameField || page != "name") return;
+  switch (key.kind) {
+  case keyboard::Kind::Save: click(82); break;
+  case keyboard::Kind::Cancel: setPage("info"); break;
+  case keyboard::Kind::Backspace: lv_textarea_delete_char(nameField); break;
+  case keyboard::Kind::Delete: lv_textarea_delete_char_forward(nameField); break;
+  case keyboard::Kind::Left: lv_textarea_cursor_left(nameField); break;
+  case keyboard::Kind::Right: lv_textarea_cursor_right(nameField); break;
+  case keyboard::Kind::Home: lv_textarea_set_cursor_pos(nameField, 0); break;
+  case keyboard::Kind::End: lv_textarea_set_cursor_pos(nameField, LV_TEXTAREA_CURSOR_LAST); break;
+  case keyboard::Kind::Clear: lv_textarea_set_text(nameField, ""); break;
+  case keyboard::Kind::Text: {
+    char text[] = {key.text, 0}; lv_textarea_add_text(nameField, text); break;
+  }
+  default: break;
+  }
+}
 static void physicalKeyboard() {
   static i2c_master_bus_handle_t bus = nullptr;
   static i2c_master_dev_handle_t dev = nullptr;
-  static int64_t retry = 0;
+  static int64_t retry = 0, pollAt = 0;
   int64_t now = esp_timer_get_time();
+  if (now < pollAt || now < retry) return;
+  pollAt = now + 20000;
+  auto online = [](bool value) {
+    keyboardOnline = value;
+    if (keyboardLabel) lv_label_set_text(keyboardLabel, value ? "Teclado conectado" : "Procurando teclado encaixado…");
+  };
+  auto disconnect = [&] {
+    if (dev) i2c_master_bus_rm_device(dev);
+    dev = nullptr; retry = now + 1000000; keyboardDecoder.reset(); online(false);
+  };
   if (!bus) {
-    if (now < retry)
-      return;
-    retry = now + 2000000;
     i2c_master_bus_config_t cfg{};
     cfg.i2c_port = BSP_I2C_NUM == 0 ? I2C_NUM_1 : I2C_NUM_0;
-    cfg.sda_io_num = GPIO_NUM_0;
-    cfg.scl_io_num = GPIO_NUM_1;
-    cfg.clk_source = I2C_CLK_SRC_DEFAULT;
-    cfg.glitch_ignore_cnt = 7;
+    cfg.sda_io_num = GPIO_NUM_0; cfg.scl_io_num = GPIO_NUM_1;
+    cfg.clk_source = I2C_CLK_SRC_DEFAULT; cfg.glitch_ignore_cnt = 7;
     cfg.flags.enable_internal_pullup = true;
-    if (i2c_new_master_bus(&cfg, &bus) != ESP_OK)
-      return;
-    retry = 0;
+    if (i2c_new_master_bus(&cfg, &bus) != ESP_OK) { retry = now + 1000000; return; }
   }
+  auto read = [&](uint8_t reg, uint8_t *data, size_t count) {
+    return i2c_master_transmit_receive(dev, &reg, 1, data, count, 50);
+  };
   auto write = [&](uint8_t reg, uint8_t value) {
-    uint8_t bytes[] = {reg, value};
-    return i2c_master_transmit(dev, bytes, 2, 5);
+    uint8_t data[] = {reg, value}; return i2c_master_transmit(dev, data, 2, 50);
   };
   if (!dev) {
-    if (now < retry)
-      return;
-    retry = now + 2000000;
-    if (i2c_master_probe(bus, 0x6d, 5) != ESP_OK)
-      return;
     i2c_device_config_t cfg{};
-    cfg.dev_addr_length = I2C_ADDR_BIT_LEN_7;
-    cfg.device_address = 0x6d;
-    cfg.scl_speed_hz = 100000;
-    if (i2c_master_bus_add_device(bus, &cfg, &dev) != ESP_OK)
-      return;
-    if (write(0x10, 1) != ESP_OK) {
-      i2c_master_bus_rm_device(dev);
-      dev = nullptr;
-      return;
-    }
-    write(0, 2);
-    write(2, 0);
-    write(1, 0);
-    keyboardOnline = true;
-    printf("KEYBOARD A164 connected\n");
+    cfg.dev_addr_length = I2C_ADDR_BIT_LEN_7; cfg.device_address = 0x6d; cfg.scl_speed_hz = 100000;
+    if (i2c_master_bus_add_device(bus, &cfg, &dev) != ESP_OK) { retry = now + 1000000; return; }
+    uint8_t address = 0;
+    // An address-only probe can time out on this STM32. Use its real ID register.
+    if (read(0xff, &address, 1) != ESP_OK || address != 0x6d ||
+        write(0x10, 1) != ESP_OK || write(0x00, 2) != ESP_OK ||
+        write(0x02, 0) != ESP_OK || write(0x01, 0) != ESP_OK) { disconnect(); return; }
+    keyboardDecoder.reset(); retry = 0; online(true);
   }
-  uint8_t reg = 2, status = 0;
-  if (i2c_master_transmit_receive(dev, &reg, 1, &status, 1, 5) != ESP_OK) {
-    i2c_master_bus_rm_device(dev);
-    dev = nullptr;
-    keyboardOnline = false;
-    return;
+  // Drain a bounded batch; IRQ acknowledgement does not clear queued events.
+  for (unsigned i = 0; i < 8; ++i) {
+    uint8_t count = 0, data[2]{};
+    if (read(0x02, &count, 1) != ESP_OK) { disconnect(); return; }
+    if (!count) break;
+    if (count > 32 || read(0x30, data, 2) != ESP_OK) { disconnect(); return; }
+    if (!data[1] || (data[0] == 0xff && data[1] == 0xff)) continue;
+    ++keyboardEvents;
+    nameKey(data[0], data[1]);
   }
-  if (!status)
-    return;
-  uint8_t data[2]{};
-  reg = 0x30;
-  if (i2c_master_transmit_receive(dev, &reg, 1, data, 2, 5) != ESP_OK)
-    return;
-  write(1, 0);
-  keyboardEvents++;
-  if (!nameField)
-    return;
-  unsigned key = data[1];
-  bool shift = data[0] & 0x22;
-  if (key == 40) {
-    click(82);
-    return;
-  }
-  if (key == 41) {
-    setPage("info");
-    return;
-  }
-  if (key == 42) {
-    lv_textarea_delete_char(nameField);
-    return;
-  }
-  if (key == 80) {
-    lv_textarea_cursor_left(nameField);
-    return;
-  }
-  if (key == 79) {
-    lv_textarea_cursor_right(nameField);
-    return;
-  }
-  char c = 0;
-  if (key >= 4 && key <= 29)
-    c = (shift ? 'A' : 'a') + key - 4;
-  else if (key >= 30 && key <= 39)
-    c = (shift ? "!@#$%^&*()" : "1234567890")[key - 30];
-  else if (key == 44)
-    c = ' ';
-  else if (key == 45)
-    c = shift ? '_' : '-';
-  else if (key == 55)
-    c = '.';
-  if (c) {
-    char text[] = {c, 0};
-    lv_textarea_add_text(nameField, text);
-  }
+  if (write(0x01, 0) != ESP_OK) disconnect();
 }
 static void step(lv_timer_t *) {
+  uiTicks++;
   int64_t now = esp_timer_get_time();
   if (now - fpsStart >= 10000000) {
     measuredFps = renderedFrames * 1000000.f / (now - fpsStart);
+    measuredUiHz = uiTicks * 1000000.f / (now - fpsStart);
+    uiTicks = 0;
     renderedFrames = 0;
     fpsStart = now;
   }
@@ -2278,6 +2661,43 @@ static void step(lv_timer_t *) {
   last = now;
   console();
   physicalKeyboard();
+  static unsigned lastAudioFault = 0;
+  unsigned audioFault = board::audioResourceErrors();
+  if (audioFault != lastAudioFault) {
+    lastAudioFault = audioFault;
+    notice = "Recurso de áudio indisponível ou corrompido. Confira o pacote; detalhes na USB.";
+    dirty = true;
+  }
+  if (now - lastBattery >= 15000000) {
+    battery = board::batteryMv();
+    if (!screenOff)
+      refreshBatteryLabels();
+    lastBattery = now;
+  }
+  // Blank only the backlight: the BSP's display sleep also disables touch.
+  // Keep simulation/checkpoints running, but avoid rendering invisible frames.
+  bool playing = ready && !fault && !profileVacant && state.match.active;
+  if (playing)
+    lv_display_trigger_activity(board::display);
+  if (!screenOff && power::shouldBlank(
+                        lv_display_get_inactive_time(board::display),
+                        settings.screenTimeoutSeconds, playing)) {
+    if (bsp_display_backlight_off() == ESP_OK) {
+      screenOff = true;
+      appliedBrightness = 0;
+      // A full-screen target also wakes above disabled buttons or empty areas.
+      wakeShield = lv_obj_create(lv_layer_top());
+      lv_obj_remove_style_all(wakeShield);
+      lv_obj_set_pos(wakeShield, 0, 0);
+      lv_obj_set_size(wakeShield, LV_PCT(100), LV_PCT(100));
+      lv_obj_remove_flag(wakeShield, LV_OBJ_FLAG_SCROLLABLE);
+      lv_obj_add_flag(wakeShield, LV_OBJ_FLAG_CLICKABLE);
+    }
+  }
+  if (now - metrics > 30000000) {
+    diagnostics(true);
+    metrics = now;
+  }
   if (profileVacant) {
     if (dirty)
       render();
@@ -2364,7 +2784,7 @@ static void step(lv_timer_t *) {
     lastHour = local.tm_hour;
   }
   if (state.match.active)
-    tickGame(state, dt);
+    tickGame(state, dt, rules);
   if (uint8_t(state.stage) != oldStage || state.form != oldForm) {
     save();
     lastForm = 255;
@@ -2380,7 +2800,7 @@ static void step(lv_timer_t *) {
     sfx(victory(state.match) ? "vitoria" : "derrota");
     rebuildGame = true;
   }
-  if (now - checkpoint > 60000000) {
+  if (now - checkpoint > int64_t(checkpointSeconds) * 1000000) {
     save();
     checkpoint = now;
   }
@@ -2389,6 +2809,8 @@ static void step(lv_timer_t *) {
                       "_chamado.wav"));
     voiceAt = 0;
   }
+  if (screenOff)
+    return;
   for (int i = 0; i < 4; i++)
     if (homeBars[i]) {
       lv_bar_set_value(homeBars[i], int(state.stats[i]), LV_ANIM_OFF);
@@ -2405,20 +2827,18 @@ static void step(lv_timer_t *) {
       strftime(t, sizeof t, "%H:%M", &local);
     else
       snprintf(t, sizeof t, "--:--");
-    lv_label_set_text(clockLabel, t);
+    if (strcmp(lv_label_get_text(clockLabel), t)) lv_label_set_text(clockLabel, t);
   }
-  if (now - lastBattery > 15000000) {
-    battery = board::batteryMv();
-    if (batteryLabel && battery > 0) {
-      char t[40];
-      snprintf(t, sizeof t, "Tab5: %.2f V", battery / 1000.);
-      lv_label_set_text(batteryLabel, t);
+  if (night) {
+    int minutes = local.tm_hour * 60 + local.tm_min;
+    int target = !state.light || state.sleeping ? 100 : wallNow < 1704067200 ? 0 :
+                 minutes < 330 || minutes >= 1110 ? 32 :
+                 minutes < 390 ? (390 - minutes) * 32 / 60 :
+                 minutes >= 1050 ? (minutes - 1050) * 32 / 60 : 0;
+    if (dayOpacity != target) {
+      dayOpacity = dayOpacity < 0 ? target : dayOpacity + (target > dayOpacity ? 1 : -1);
+      lv_obj_set_style_bg_opa(night, dayOpacity, 0);
     }
-    lastBattery = now;
-  }
-  if (now - metrics > 30000000) {
-    diagnostics(true);
-    metrics = now;
   }
   if (dirty) {
     gameArea = nullptr;
@@ -2426,18 +2846,22 @@ static void step(lv_timer_t *) {
   }
   frame = now / 160000;
   if (petImage && !bank.empty()) {
-    imageDescriptor(petDsc, 96, 96,
-                    bank.data() + animationFrame() * 96 * 96 * 3, true);
-    lv_image_set_src(petImage, &petDsc);
+    unsigned pose = animationFrame();
+    if (pose != currentPose) {
+      currentPose = pose;
+      imageDescriptor(petDsc, activeAsset().width, activeAsset().height,
+                      bank.data() + pose * activeAsset().width * activeAsset().height * 3, true);
+      lv_image_set_src(petImage, &petDsc);
+    }
     if (page == "match")
       lv_obj_set_pos(petImage, 752, 85);
     else
       lv_obj_set_pos(petImage,
-                     360 + (settings.tilt ? board::tiltOffset() : 0) +
+                     360 + (48 - activeAsset().anchorX) * 3 + (settings.tilt ? board::tiltOffset() : 0) +
                          (state.action == Action::Explore
                               ? int((now / 80000) % 70) - 35
                               : 0),
-                     page == "home" ? 210 : 258);
+                     (page == "home" ? 210 : 258) + (81 - activeAsset().anchorY) * 3);
   }
   if (state.pendingEvolution && nowSim + 2000000 < uint64_t(now)) {
     state.pendingEvolution--;
@@ -2465,7 +2889,7 @@ static void step(lv_timer_t *) {
       char txt[96];
       snprintf(txt, sizeof txt, "Frutas: %d • %u segundos", int(m.score),
                unsigned(m.elapsed >= 30000 ? 0 : 30 - m.elapsed / 1000));
-      lv_label_set_text(gameStatus, txt);
+      if (strcmp(lv_label_get_text(gameStatus), txt)) lv_label_set_text(gameStatus, txt);
     }
   }
   if (state.stage == Stage::Egg && status) {
@@ -2489,10 +2913,14 @@ void start() {
                                "com a pasta tamagotchi.";
   ready = board::sdReady && content();
   if (ready) {
+    board::assetValidator(validateAudioAsset);
     loadSettings(path("saves/settings"), settings);
     lv_obj_set_style_text_font(screen, &font, 0);
     loadProfile(settings.profile);
   }
+  battery = board::batteryMv();
+  lastBattery = esp_timer_get_time();
+  applyBrightness();
   render();
   last = checkpoint = nowSim = esp_timer_get_time();
   usb_serial_jtag_driver_config_t c{};
@@ -2508,11 +2936,28 @@ void start() {
     d->state = esp_timer_get_time() < testRelease ? LV_INDEV_STATE_PRESSED
                                                   : LV_INDEV_STATE_RELEASED;
   });
+  for (auto *input = lv_indev_get_next(nullptr); input;
+       input = lv_indev_get_next(input)) {
+    if (lv_indev_get_display(input) != board::display)
+      continue;
+    lv_indev_add_event_cb(input, [](lv_event_t *e) {
+      if (!screenOff)
+        return;
+      displayActivity();
+      auto *input = static_cast<lv_indev_t *>(lv_event_get_target(e));
+      // Consume the entire first gesture, including a long press/release.
+      lv_indev_stop_processing(input);
+      lv_indev_wait_release(input);
+    }, LV_EVENT_PRESSED, nullptr);
+  }
+  lv_display_trigger_activity(board::display);
   fpsStart = esp_timer_get_time();
   lv_display_add_event_cb(
       board::display, [](lv_event_t *) { renderedFrames++; },
       LV_EVENT_REFR_READY, nullptr);
-  lv_timer_create(step, 33, nullptr);
+  // Headroom above 30 fps: LVGL schedules the next period after rendering work.
+  lv_timer_set_period(lv_display_get_refr_timer(board::display), 16);
+  lv_timer_create(step, 16, nullptr);
   bsp_display_unlock();
 }
 } // namespace ui

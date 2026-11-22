@@ -1,3 +1,6 @@
 PASS: identidade, recuperação A/B, cuidados, evolução 36 caminhos, tempo e oito jogos
 PASS: herança local, pais compatíveis e ausência de híbridos
 PASS: visita LAN em dois processos UDP, validação de bytes e duplicação
+PASS: bateria 2S, inatividade, migração de ajustes e backup A/B
+PASS: limites por etapa, ganhos configuráveis, exploração e migração v1/v2
+PASS: HID, maiúsculas, símbolos, edição e atalhos de nome

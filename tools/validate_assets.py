@@ -13,10 +13,18 @@ for entry in m['files']:
    if 'music' in p.parts:assert 20<=len(a)/22050<=45 and abs(int(a[0])-int(a[-1]))<32
   audio+=1
 coverage=[]
+assert len(set(m['families'])) == len(m['families']) == 6
+ids=set()
+required={'idle','piscar','olhar','andar','feliz','triste','fome','cansaco','dormir','comer','beber','urgencia','banheiro','banho','doente','vitoria','derrota','carinho','evolucao'}
 for family in m['families']:
  f=json.loads((base/f'pets/{family}/family.json').read_text());assert len(f['forms'])==9 and len(f['palettes'])==4 and len(f['details'])==2
  first_poses=set()
  for i,form in enumerate(f['forms']):
+  assert form['id'] not in ids;ids.add(form['id'])
+  assert form['file'] in files and form['format']=='RGB565A8_PLANAR'
+  assert 40<=form.get('frame_ms',160)<=2000
+  assert 0<=form['anchor'][0]<=form['width'] and 0<=form['anchor'][1]<=form['height']
+  assert (required if i<8 else {'idle','balancar','rachadura','eclosao'}) <= set(form['animations'])
   assert (base/form['file']).stat().st_size==96*96*3*32;data=(base/form['file']).read_bytes();frames=[data[j*27648:(j+1)*27648] for j in range(32)]
   assert all(any(x[18432:]) for x in frames)
   assert frames[0] not in first_poses,(family,i,'duplicate form');first_poses.add(frames[0])

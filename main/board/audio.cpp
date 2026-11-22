@@ -1,4 +1,5 @@
 #include "board.hpp"
+#include "esp_log.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 #include <algorithm>
@@ -11,6 +12,10 @@ static std::string wantedMusic, wantedSfx, wantedVoice;
 static int masterVol = 55, musicVol = 30, sfxVol = 65;
 static std::atomic<bool> muted{false}, cutAudio{false};
 static std::atomic<unsigned> blocks{0}, errors{0};
+static bool (*validateAsset)(const std::string &) = nullptr;
+static std::atomic<unsigned> resourceErrors{0};
+unsigned audioResourceErrors() { return resourceErrors.load(); }
+void assetValidator(bool (*callback)(const std::string &)) { validateAsset = callback; }
 unsigned audioBlocks() { return blocks.load(); }
 unsigned audioErrors() { return errors.load(); }
 void music(const std::string &p) {
@@ -57,13 +62,21 @@ void mute(bool b) { muted = b; }
 static FILE *openWav(const std::string &p) {
   if (p.empty())
     return nullptr;
-  FILE *f = fopen(p.c_str(), "rb");
-  if (!f)
+  if (validateAsset && !validateAsset(p)) {
+    resourceErrors++;
+    ESP_LOGE("audio", "Recurso inválido: %s", p.c_str());
     return nullptr;
+  }
+  FILE *f = fopen(p.c_str(), "rb");
+  if (!f) {
+    resourceErrors++; ESP_LOGE("audio", "Recurso ausente: %s", p.c_str());
+    return nullptr;
+  }
   uint8_t h[44];
   if (fread(h, 1, 44, f) != 44 || memcmp(h, "RIFF", 4) ||
       memcmp(h + 8, "WAVE", 4) || h[20] != 1 || h[22] != 1 || h[34] != 16 ||
       h[24] != 0x22 || h[25] != 0x56 || h[26] != 0 || h[27] != 0) {
+    resourceErrors++; ESP_LOGE("audio", "Formato inválido: %s", p.c_str());
     fclose(f);
     return nullptr;
   }
@@ -132,6 +145,7 @@ static void task(void *) {
       size_t n = fread(a, 2, 512, bg);
       if (n < 512) {
         if (ferror(bg)) {
+          resourceErrors++; ESP_LOGE("audio", "Falha de leitura da música");
           fclose(bg);
           bg = nullptr;
         } else {

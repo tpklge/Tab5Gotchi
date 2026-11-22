@@ -7,7 +7,7 @@ if not (dest/'dependencies.lock').exists() and (root/'dependencies-extras.lock')
  shutil.copyfile(root/'dependencies-extras.lock',dest/'dependencies.lock')
 for directory in ['main','tools']:shutil.copytree(root/directory,dest/directory,dirs_exist_ok=True)
 for name in ['CMakeLists.txt','partitions.csv']:shutil.copyfile(root/name,dest/name)
-project=(dest/'CMakeLists.txt').read_text().replace('set(PROJECT_VER "0.1.0")','set(PROJECT_VER "0.1.0-extras")');(dest/'CMakeLists.txt').write_text(project)
+project=(dest/'CMakeLists.txt').read_text().replace('set(PROJECT_VER "0.2.1")','set(PROJECT_VER "0.2.1-extras")');(dest/'CMakeLists.txt').write_text(project)
 (dest/'sdkconfig.defaults').write_text((root/'sdkconfig.defaults').read_text()+'\n'+(root/'sdkconfig.extras').read_text())
 manifest=(root/'main/idf_component.yml').read_text()+"  espressif/esp_hosted: '==2.13.1'\n  espressif/esp_wifi_remote: '==1.6.5'\n"
 (dest/'main/idf_component.yml').write_text(manifest)
