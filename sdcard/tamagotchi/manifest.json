@@ -1,0 +1,922 @@
+{
+  "schema_version": 1,
+  "content_version": "0.1.0",
+  "engine_api_version": 1,
+  "families": [
+    "capim",
+    "brotito",
+    "brasquito",
+    "gotim",
+    "nuvito",
+    "parafim"
+  ],
+  "scenes": [
+    "casa",
+    "cozinha",
+    "banheiro",
+    "banho",
+    "quarto",
+    "quintal",
+    "cuidados",
+    "jogos",
+    "bercario",
+    "album"
+  ],
+  "files": [
+    {
+      "path": "audio/music/banheiro.wav",
+      "bytes": 1058444,
+      "sha256": "ea7fed760ffb1c918eb44bc7e1583156161cd4784c09e45e1f3c5d451282cf18"
+    },
+    {
+      "path": "audio/music/bercario.wav",
+      "bytes": 1058444,
+      "sha256": "92c3728bd47a3f6be06d427b55fab5306727c47f086b325e6dd3c409629fb0e6"
+    },
+    {
+      "path": "audio/music/casa.wav",
+      "bytes": 1058444,
+      "sha256": "65d622d05a506c6a149601d9449ec3e6ad42877c914ef1d61006e08e8090926c"
+    },
+    {
+      "path": "audio/music/cozinha.wav",
+      "bytes": 1058444,
+      "sha256": "e5ebd30627ddf5c973d82e167f6a1301419eca7b20e2a1320148161c135d94e2"
+    },
+    {
+      "path": "audio/music/cuidados.wav",
+      "bytes": 1058444,
+      "sha256": "b5e2f6040c90e554213799e55a8346b8cc8a245d56117dcf4594b6ae84ec5088"
+    },
+    {
+      "path": "audio/music/jogos.wav",
+      "bytes": 1058444,
+      "sha256": "0d221099343ca5483174d4c05d028747b5d26bb3d76a0348e5cb7b024bb3c67e"
+    },
+    {
+      "path": "audio/music/quarto.wav",
+      "bytes": 1058444,
+      "sha256": "216a350a837c00979fe225b143d8a290e914b757354c21aaed059e3a04db0240"
+    },
+    {
+      "path": "audio/music/quintal.wav",
+      "bytes": 1058444,
+      "sha256": "1ad18cd40c995e6cd416fe28c761c352ea7be146d1c0925d8b118780757a2ff3"
+    },
+    {
+      "path": "audio/sfx/agua.wav",
+      "bytes": 9748,
+      "sha256": "56e71ef7e314be3b18b6ed42d3704a9d981f369660680259bde51f46526bc956"
+    },
+    {
+      "path": "audio/sfx/atencao.wav",
+      "bytes": 9748,
+      "sha256": "ad57b894c469c7ea4b92fa78ad9684f9e568cad9db8c083cf1d8b897d3b4869c"
+    },
+    {
+      "path": "audio/sfx/banheiro.wav",
+      "bytes": 9748,
+      "sha256": "5ac8f14076d4dbbde6ebc46a7fcea6dd9e325873f3ec9fe8e802892a31ae72d6"
+    },
+    {
+      "path": "audio/sfx/banho.wav",
+      "bytes": 9748,
+      "sha256": "6b24aa563f145b6736bf2a4a058df76c01e1de078479e597f12db5b29ced0b26"
+    },
+    {
+      "path": "audio/sfx/botao.wav",
+      "bytes": 9748,
+      "sha256": "df65413a71c8759fc5a09be9bb9a16675f7279bfec9e814d7e3acb94c3bb4fa6"
+    },
+    {
+      "path": "audio/sfx/brasquito_alegria.wav",
+      "bytes": 15920,
+      "sha256": "aa1760f145a9a3b46cf8662ff3db3fb550074e409a41e7eec6c70604a84a65b8"
+    },
+    {
+      "path": "audio/sfx/brasquito_chamado.wav",
+      "bytes": 15920,
+      "sha256": "f42edb59e8f89a64c1988112b964f6662f0dcf0ebbe429dd6f1a17e5b194270d"
+    },
+    {
+      "path": "audio/sfx/brasquito_sono.wav",
+      "bytes": 29150,
+      "sha256": "eab06e16db90f011f879396a9d4c6903fc6c798d92dbe33a8a6479f7f5115cd0"
+    },
+    {
+      "path": "audio/sfx/brotito_alegria.wav",
+      "bytes": 15920,
+      "sha256": "8e4b8b14675c60b9da532a63d92221d851711d9bd4338990f6fb95d044308b01"
+    },
+    {
+      "path": "audio/sfx/brotito_chamado.wav",
+      "bytes": 15920,
+      "sha256": "2b60043d8f015d5ef2a0523152575a0a461a4ce547f8e2397f1b92bd5ed8d673"
+    },
+    {
+      "path": "audio/sfx/brotito_sono.wav",
+      "bytes": 29150,
+      "sha256": "702564ab59936d2eefcfd1815ca14b4fb32758b8b6ceb65c81aacabacba6a151"
+    },
+    {
+      "path": "audio/sfx/cancelar.wav",
+      "bytes": 9748,
+      "sha256": "25e5edddd840d880a848a66088a46b0efe14eb4e37f7ea73f86f089583e7a398"
+    },
+    {
+      "path": "audio/sfx/capim_alegria.wav",
+      "bytes": 15920,
+      "sha256": "84ab635b8744d1aecc90904b0bd9a0661fb92aac26538344e5c21ee6bd3e57e6"
+    },
+    {
+      "path": "audio/sfx/capim_chamado.wav",
+      "bytes": 15920,
+      "sha256": "47e27dffe2e48df81dcde9fc49b099601bc1584597dcf7a87aa1eba8bc7ec3bd"
+    },
+    {
+      "path": "audio/sfx/capim_sono.wav",
+      "bytes": 29150,
+      "sha256": "d81d0379a64e8535436927ebc7f65fac75bcb6b11e901d9a95799dc3a400d1c4"
+    },
+    {
+      "path": "audio/sfx/carinho.wav",
+      "bytes": 9748,
+      "sha256": "df65413a71c8759fc5a09be9bb9a16675f7279bfec9e814d7e3acb94c3bb4fa6"
+    },
+    {
+      "path": "audio/sfx/comida.wav",
+      "bytes": 9748,
+      "sha256": "3c84b2067be21e3d1f2245e3b62017985264eeb58036de47feca113d3f9193c1"
+    },
+    {
+      "path": "audio/sfx/confirmar.wav",
+      "bytes": 9748,
+      "sha256": "6b24aa563f145b6736bf2a4a058df76c01e1de078479e597f12db5b29ced0b26"
+    },
+    {
+      "path": "audio/sfx/derrota.wav",
+      "bytes": 9748,
+      "sha256": "5ac8f14076d4dbbde6ebc46a7fcea6dd9e325873f3ec9fe8e802892a31ae72d6"
+    },
+    {
+      "path": "audio/sfx/descarga.wav",
+      "bytes": 9748,
+      "sha256": "df65413a71c8759fc5a09be9bb9a16675f7279bfec9e814d7e3acb94c3bb4fa6"
+    },
+    {
+      "path": "audio/sfx/eclosao.wav",
+      "bytes": 14600,
+      "sha256": "9c07ff2cad71904d317ac59b43ac08279e47bb816fad23290a12ef38c2abecb9"
+    },
+    {
+      "path": "audio/sfx/evolucao.wav",
+      "bytes": 14600,
+      "sha256": "ec42968c2661a5f8d1e71b70ffc6bec7136c37e7e9346cf6b4cec02abc18d90b"
+    },
+    {
+      "path": "audio/sfx/explorar.wav",
+      "bytes": 9748,
+      "sha256": "6b24aa563f145b6736bf2a4a058df76c01e1de078479e597f12db5b29ced0b26"
+    },
+    {
+      "path": "audio/sfx/gotim_alegria.wav",
+      "bytes": 15920,
+      "sha256": "14c11bdfd45685622909c1f0e650d4978a999f7a444edc8004ca86e438fcbed0"
+    },
+    {
+      "path": "audio/sfx/gotim_chamado.wav",
+      "bytes": 15920,
+      "sha256": "334fde4f18eb3b988b0ce8ea055dd662f5160f0fdbc65dc4952b9862407eded5"
+    },
+    {
+      "path": "audio/sfx/gotim_sono.wav",
+      "bytes": 29150,
+      "sha256": "d144bdef29aafc3f8144596a3c41fc3bf1d08e28135c483616dd87541e006d13"
+    },
+    {
+      "path": "audio/sfx/nota0.wav",
+      "bytes": 9748,
+      "sha256": "25e5edddd840d880a848a66088a46b0efe14eb4e37f7ea73f86f089583e7a398"
+    },
+    {
+      "path": "audio/sfx/nota1.wav",
+      "bytes": 9748,
+      "sha256": "1da610807f48794e64022c4c79179ecd6cb858f39bdc7785e70d25134ea7b4bd"
+    },
+    {
+      "path": "audio/sfx/nota2.wav",
+      "bytes": 9748,
+      "sha256": "ad57b894c469c7ea4b92fa78ad9684f9e568cad9db8c083cf1d8b897d3b4869c"
+    },
+    {
+      "path": "audio/sfx/nota3.wav",
+      "bytes": 9748,
+      "sha256": "3c84b2067be21e3d1f2245e3b62017985264eeb58036de47feca113d3f9193c1"
+    },
+    {
+      "path": "audio/sfx/nuvito_alegria.wav",
+      "bytes": 15920,
+      "sha256": "3d396168d15163a262e97d7e3c7413d7096218b2a845fd82e14e09e9eb71e9d6"
+    },
+    {
+      "path": "audio/sfx/nuvito_chamado.wav",
+      "bytes": 15920,
+      "sha256": "0fab300ca9f0596aae4fb055afbfda79020d74bb9e951fa2ca5c0aac02dd39ca"
+    },
+    {
+      "path": "audio/sfx/nuvito_sono.wav",
+      "bytes": 29150,
+      "sha256": "1f1e2fcb5457bd5efaf5f0f6f39959e35bf93a769db4bba18c0132caf89fe999"
+    },
+    {
+      "path": "audio/sfx/parafim_alegria.wav",
+      "bytes": 15920,
+      "sha256": "9c4c69d8ceb4535b4664c53374d610f36cfa78b995e7dc2053f30cc433a0205f"
+    },
+    {
+      "path": "audio/sfx/parafim_chamado.wav",
+      "bytes": 15920,
+      "sha256": "dda80ab3ef03b67e71dd713f815e0a6774a77a221a0cbd1eb7b2dcade3a22ef2"
+    },
+    {
+      "path": "audio/sfx/parafim_sono.wav",
+      "bytes": 29150,
+      "sha256": "d24509118fcc9eb85a7157f127158eaae40b07039e5b5e1f2487033e5de7566b"
+    },
+    {
+      "path": "audio/sfx/recusa.wav",
+      "bytes": 9748,
+      "sha256": "1da610807f48794e64022c4c79179ecd6cb858f39bdc7785e70d25134ea7b4bd"
+    },
+    {
+      "path": "audio/sfx/sono.wav",
+      "bytes": 9748,
+      "sha256": "25e5edddd840d880a848a66088a46b0efe14eb4e37f7ea73f86f089583e7a398"
+    },
+    {
+      "path": "audio/sfx/tratamento.wav",
+      "bytes": 9748,
+      "sha256": "3c84b2067be21e3d1f2245e3b62017985264eeb58036de47feca113d3f9193c1"
+    },
+    {
+      "path": "audio/sfx/vitoria.wav",
+      "bytes": 14600,
+      "sha256": "a6471515dbadd010b8ceaf4cdd408e88b27993855150a21a7b3bfd6e25eaccc3"
+    },
+    {
+      "path": "data/decor.json",
+      "bytes": 1414,
+      "sha256": "6efc9c7dac329f5e5806e46ccd7f186e6b91990ae67a5534620a086a4fb6f757"
+    },
+    {
+      "path": "data/foods.json",
+      "bytes": 2055,
+      "sha256": "575140142002cd5d2787c37fb12a668fe9daa3d41d1d1907f44e0e6e01ff933b"
+    },
+    {
+      "path": "data/games.json",
+      "bytes": 1079,
+      "sha256": "68da666bb22db4fc659493450f894a85a7ef71db7cd0f4c5269968090e02f9a8"
+    },
+    {
+      "path": "data/rules.json",
+      "bytes": 353,
+      "sha256": "50efd004676151990db7d8689b747b67b6533b8d391f45304f197125b903678e"
+    },
+    {
+      "path": "licenses/DejaVu.txt",
+      "bytes": 4816,
+      "sha256": "d75938dec098f06f0ac3c00853065d94f020be1c3c62ef1dc2975ba15b4d9b0e"
+    },
+    {
+      "path": "licenses/original-MIT.txt",
+      "bytes": 1080,
+      "sha256": "61df100faba0c0cf3d5e6932608e387e41b3ff074b6134e5884e31a9d17d708e"
+    },
+    {
+      "path": "pets/brasquito/0.rgb",
+      "bytes": 884736,
+      "sha256": "a973b051542987b03a0be2142dc0ea2a2ff2cfbc39c261b4fad536956c44e2c1"
+    },
+    {
+      "path": "pets/brasquito/1.rgb",
+      "bytes": 884736,
+      "sha256": "d8adff9134c2efea6def4549a109cc519e3df1490b021c41fe73e6ec5ae6609b"
+    },
+    {
+      "path": "pets/brasquito/2.rgb",
+      "bytes": 884736,
+      "sha256": "f75c8aa6a60eff67468855bd6f74e2095f1d3f77cd48dd661d36fbf4cceee479"
+    },
+    {
+      "path": "pets/brasquito/3.rgb",
+      "bytes": 884736,
+      "sha256": "85748a6301a40e1b314243f8a8569e2cd27f01f7af6ca3d7be4b428d12dd78fd"
+    },
+    {
+      "path": "pets/brasquito/4.rgb",
+      "bytes": 884736,
+      "sha256": "b4de4a73c726b57152b9d5315d3b89a605d0eb264a8c9315e5f446e62fc0ee92"
+    },
+    {
+      "path": "pets/brasquito/5.rgb",
+      "bytes": 884736,
+      "sha256": "af485aad705fb9cd2ed1091396a214189e6da75685fcc13d3479f0a44818220a"
+    },
+    {
+      "path": "pets/brasquito/6.rgb",
+      "bytes": 884736,
+      "sha256": "0854bcdcaf69c8c51960d6d9b93975a0e6623566c345fad20d497e3368bd30a2"
+    },
+    {
+      "path": "pets/brasquito/7.rgb",
+      "bytes": 884736,
+      "sha256": "6441e5ac177f801825218fff723c11ebc06b4b417ef414423dae77136686c30d"
+    },
+    {
+      "path": "pets/brasquito/8.rgb",
+      "bytes": 884736,
+      "sha256": "8069377d46905799ce343d06d1e43584cd317143499daaddfea931ad43e40ab2"
+    },
+    {
+      "path": "pets/brasquito/elder0.rgb",
+      "bytes": 27648,
+      "sha256": "5369d60ecfc82659e84de88aad35ec610d639d7fac7a651e20e884a656c8ab50"
+    },
+    {
+      "path": "pets/brasquito/elder1.rgb",
+      "bytes": 27648,
+      "sha256": "6b4a79582281f06ce3a2a9fa9e0533eb885391abacfef8f0b8b3b6b79231c12a"
+    },
+    {
+      "path": "pets/brasquito/elder2.rgb",
+      "bytes": 27648,
+      "sha256": "a7d9c54fdcfcf51f12fa6997999cde7d3722c29b56f7a6de2187ba91b6b511d5"
+    },
+    {
+      "path": "pets/brasquito/family.json",
+      "bytes": 14547,
+      "sha256": "a3b17391610a0063f2db873627aa5dad691c9360ee3f7d900e1400e9dbfbf6a3"
+    },
+    {
+      "path": "pets/brotito/0.rgb",
+      "bytes": 884736,
+      "sha256": "5ce722c11f25ccfea2f788b5f59f96d2376fa3dcb030748cd53d685889d9b414"
+    },
+    {
+      "path": "pets/brotito/1.rgb",
+      "bytes": 884736,
+      "sha256": "d945259d71f691de6282fbe3fff12c7cd5d130b4b777c3bed112b27cba5380ed"
+    },
+    {
+      "path": "pets/brotito/2.rgb",
+      "bytes": 884736,
+      "sha256": "036dbe961bf10cf5703719d4ce4b51e02cebd57a3265b2caa42699e649794dc8"
+    },
+    {
+      "path": "pets/brotito/3.rgb",
+      "bytes": 884736,
+      "sha256": "6cf54fdb4e301bc921799f37756c56a3bee54328020103a49745315e1d492cc6"
+    },
+    {
+      "path": "pets/brotito/4.rgb",
+      "bytes": 884736,
+      "sha256": "f651e23cd44322cf611e2959e8a84f80165ee1526e2645b5861efe2195acba12"
+    },
+    {
+      "path": "pets/brotito/5.rgb",
+      "bytes": 884736,
+      "sha256": "1a8f1a85ce90b94a73d1b7ab4a2ac4155abc9fd7065c6abf15c12375498e5f98"
+    },
+    {
+      "path": "pets/brotito/6.rgb",
+      "bytes": 884736,
+      "sha256": "206d4a1c88030f9f28eff1dc2711f3305fe1b523701b8019af98c03f1777d18e"
+    },
+    {
+      "path": "pets/brotito/7.rgb",
+      "bytes": 884736,
+      "sha256": "14ad8c16b9cdff9e6b3211e9bc5a67c9fb2ee5eaba24ae880058ea2474901f23"
+    },
+    {
+      "path": "pets/brotito/8.rgb",
+      "bytes": 884736,
+      "sha256": "76513f8a02e1e7533135c548ae20b4b1f775665a40ea4004b2fed2a9a60465de"
+    },
+    {
+      "path": "pets/brotito/elder0.rgb",
+      "bytes": 27648,
+      "sha256": "57f602679fe7c2706ac3a1a419351a14449d099c7186814928c616ee888e8450"
+    },
+    {
+      "path": "pets/brotito/elder1.rgb",
+      "bytes": 27648,
+      "sha256": "33449c4df08a32216bff2b5a5b073cf48f561cdb6b444f8f36eb545768ee249d"
+    },
+    {
+      "path": "pets/brotito/elder2.rgb",
+      "bytes": 27648,
+      "sha256": "971f49fcd8f22bcc7bc4703f3981782f1426e31832af6646d5b3e4a3901a7bbb"
+    },
+    {
+      "path": "pets/brotito/family.json",
+      "bytes": 14494,
+      "sha256": "8be068e0996cde73e5b1a90fb6d7664fc4c8274b96cd25d0f5cce97afee74e35"
+    },
+    {
+      "path": "pets/capim/0.rgb",
+      "bytes": 884736,
+      "sha256": "2c7d209c32cc47d091ab2c4f8380984ea49d6256b2f2d3b2736a1b127de7714b"
+    },
+    {
+      "path": "pets/capim/1.rgb",
+      "bytes": 884736,
+      "sha256": "8ca9d866328baae6885e04e296402f87ef436dcf085fd804bbf27727575091f7"
+    },
+    {
+      "path": "pets/capim/2.rgb",
+      "bytes": 884736,
+      "sha256": "a1057c7e7d26f0d70e7d3b6827978c66d095bc6082a6e922d836bb871d4346b9"
+    },
+    {
+      "path": "pets/capim/3.rgb",
+      "bytes": 884736,
+      "sha256": "5492cf95779765fd3e24dba802eb2cb2b6f5d0cd8c9543ba6186f3033097c58c"
+    },
+    {
+      "path": "pets/capim/4.rgb",
+      "bytes": 884736,
+      "sha256": "e57a8a76ab424020f961bf78e5f202d705cc34c4160bf6f7c8fa02673419ef39"
+    },
+    {
+      "path": "pets/capim/5.rgb",
+      "bytes": 884736,
+      "sha256": "6a2d2e818d96b14e1aa30f5c06567585ed964444ee233f55905e32f8c9a5cc84"
+    },
+    {
+      "path": "pets/capim/6.rgb",
+      "bytes": 884736,
+      "sha256": "68a1928fa526e173eec6905942c4e5cfab7c8218c27ad2160b29b7e1073dc07b"
+    },
+    {
+      "path": "pets/capim/7.rgb",
+      "bytes": 884736,
+      "sha256": "a23b7c84c4db84257ac8b942faf01c3041368934ba4951976f4302e9c3116002"
+    },
+    {
+      "path": "pets/capim/8.rgb",
+      "bytes": 884736,
+      "sha256": "e0f891d0f6d23b568b3665d272034fb2c8e188dd51cd5c8b62c5ab36d8a5f2f4"
+    },
+    {
+      "path": "pets/capim/elder0.rgb",
+      "bytes": 27648,
+      "sha256": "19590bb0aacd3ce74e989f532e160e720802a7dcf14fca376535d5714561d3cd"
+    },
+    {
+      "path": "pets/capim/elder1.rgb",
+      "bytes": 27648,
+      "sha256": "f2ac7b106a89b84d150755ad5bdeb61d77d25b010a2f6d8f0910bb7d5f9c3587"
+    },
+    {
+      "path": "pets/capim/elder2.rgb",
+      "bytes": 27648,
+      "sha256": "006a46a08a3931a1d63e8749da4e9b9ad8114e6e6f0fd388ac8d2e6cca409588"
+    },
+    {
+      "path": "pets/capim/family.json",
+      "bytes": 14466,
+      "sha256": "1f1790a603aafb8898067f43a8b777de64c819a9490b82881b5f90e51cf432a4"
+    },
+    {
+      "path": "pets/gotim/0.rgb",
+      "bytes": 884736,
+      "sha256": "56cb96f04723269dc6c96740cc238d4a421a35ac159ce585af7103cc6ca0c407"
+    },
+    {
+      "path": "pets/gotim/1.rgb",
+      "bytes": 884736,
+      "sha256": "8a6429b913bd5848520cb6ceda5be141e658f5944962ed45a7ff51742223dcb5"
+    },
+    {
+      "path": "pets/gotim/2.rgb",
+      "bytes": 884736,
+      "sha256": "80fc8ad78a873860cc3e1f3cef0f8b7875df7630bd0dba87a4a7417427eba5cc"
+    },
+    {
+      "path": "pets/gotim/3.rgb",
+      "bytes": 884736,
+      "sha256": "9fbed34ed51bc2efb2a26dc7f16c9ee966b545cacde0e3112536d42bd7d6aa15"
+    },
+    {
+      "path": "pets/gotim/4.rgb",
+      "bytes": 884736,
+      "sha256": "2b5ba3105aa8e7c97f5b8f5bf74a48e0501c9dbb0f83c6f88643a5b9cd9c158d"
+    },
+    {
+      "path": "pets/gotim/5.rgb",
+      "bytes": 884736,
+      "sha256": "c7941674d152cbbae6e02b68e9f699e522d775b6a633296036067aa13357c27e"
+    },
+    {
+      "path": "pets/gotim/6.rgb",
+      "bytes": 884736,
+      "sha256": "2f58cf8bc28452087a8babf3f8f74dda7a8f73ac1a0c246d6b81935f26e86e4a"
+    },
+    {
+      "path": "pets/gotim/7.rgb",
+      "bytes": 884736,
+      "sha256": "5c43ca96a22f05a1e54dfb161aad44f58db2feae53a105823722a38e74198c87"
+    },
+    {
+      "path": "pets/gotim/8.rgb",
+      "bytes": 884736,
+      "sha256": "8d2d74595cd702f8d67234aeddbb6b1c3bcbe10bf72b1d639f5a1a0d96afef49"
+    },
+    {
+      "path": "pets/gotim/elder0.rgb",
+      "bytes": 27648,
+      "sha256": "69cae57286f1974dad520157ef87e64bd0085b0dc48939abb1a4afb946a46c8c"
+    },
+    {
+      "path": "pets/gotim/elder1.rgb",
+      "bytes": 27648,
+      "sha256": "ccbc7e270cf009f8509a10058a75d7272b5754b8ea974615704ddfc36f76aee8"
+    },
+    {
+      "path": "pets/gotim/elder2.rgb",
+      "bytes": 27648,
+      "sha256": "fa80e974e26683d907a55bb5e75d9b1197199e556460c2839370312634f1c1b3"
+    },
+    {
+      "path": "pets/gotim/family.json",
+      "bytes": 14466,
+      "sha256": "c16346c4ecf773317ba97ebd55491f8f5846a9c1091eeba94fe194d07d034afb"
+    },
+    {
+      "path": "pets/nuvito/0.rgb",
+      "bytes": 884736,
+      "sha256": "1c4778b831493630c9a6155cb6a5d8ee98b2aba7581beaef9361c5162f003efa"
+    },
+    {
+      "path": "pets/nuvito/1.rgb",
+      "bytes": 884736,
+      "sha256": "cafc61db1272a3d8ca269bc9846b4fe61d4720ba1cca2592329243ad13da3534"
+    },
+    {
+      "path": "pets/nuvito/2.rgb",
+      "bytes": 884736,
+      "sha256": "99af583680f5d99a171d41956a13af1a151bc44321c47fbc8112cd79dbc60954"
+    },
+    {
+      "path": "pets/nuvito/3.rgb",
+      "bytes": 884736,
+      "sha256": "dd2147f7f424463aa0614928e3c24ea78690928d0e0d69128296e6062e1ad6cb"
+    },
+    {
+      "path": "pets/nuvito/4.rgb",
+      "bytes": 884736,
+      "sha256": "3977db85de2e03b57e32376015c022059af6cd5a236fa9bb09959234da1f7aa8"
+    },
+    {
+      "path": "pets/nuvito/5.rgb",
+      "bytes": 884736,
+      "sha256": "44296fa000ed60232d1b881ef47ef2a323dac7b4d7c24935ab833e4a370e77ca"
+    },
+    {
+      "path": "pets/nuvito/6.rgb",
+      "bytes": 884736,
+      "sha256": "b563e723af883075932eda8cddc682f7fb07d914591e248c9cb624a598857b1d"
+    },
+    {
+      "path": "pets/nuvito/7.rgb",
+      "bytes": 884736,
+      "sha256": "994dffa51dfc56b581803c6c203ed163d5dd515182e3e57a3a46606aecc76de9"
+    },
+    {
+      "path": "pets/nuvito/8.rgb",
+      "bytes": 884736,
+      "sha256": "9aa0e016a0426c2f06b0e97c24438edbe144413eadf3502c6e88c829ffe84f06"
+    },
+    {
+      "path": "pets/nuvito/elder0.rgb",
+      "bytes": 27648,
+      "sha256": "ffe665ae57ad51cf5dc0c03a405b54e5392c8d894e2062c97c95dfd265d3b503"
+    },
+    {
+      "path": "pets/nuvito/elder1.rgb",
+      "bytes": 27648,
+      "sha256": "a5ca9004e6cbab1c9bee71830b4c59badda29cbbd5b07945242b58618566ef56"
+    },
+    {
+      "path": "pets/nuvito/elder2.rgb",
+      "bytes": 27648,
+      "sha256": "00707d3a0fef0b0f829d42698f95e160ce9328f63161145bf38484058c6b2ad7"
+    },
+    {
+      "path": "pets/nuvito/family.json",
+      "bytes": 14473,
+      "sha256": "80aff935c235567173f6deab2df072f5a9c6b8ad9e87dbdaf99230d24b1b67f5"
+    },
+    {
+      "path": "pets/parafim/0.rgb",
+      "bytes": 884736,
+      "sha256": "b42113ad9b2e42865b92c8b3683ce1b0340f9ad38b0434e70bf994176316fd36"
+    },
+    {
+      "path": "pets/parafim/1.rgb",
+      "bytes": 884736,
+      "sha256": "b59ccc2895335a1842219f9faea46869ae0a290396de33a289374c83dc73e4e7"
+    },
+    {
+      "path": "pets/parafim/2.rgb",
+      "bytes": 884736,
+      "sha256": "a86d9cd0d6a606f945e2208dcbafcaea94812b54acd5046654e46249bd61eed5"
+    },
+    {
+      "path": "pets/parafim/3.rgb",
+      "bytes": 884736,
+      "sha256": "e6d0693c5b399abec186d729977c03c3e4fa37207ff8e07dc1af8432095cb36a"
+    },
+    {
+      "path": "pets/parafim/4.rgb",
+      "bytes": 884736,
+      "sha256": "c2651cea8dcb34465079c43e4a8ede4437330ccfe2aedb833d135ca5691ad79d"
+    },
+    {
+      "path": "pets/parafim/5.rgb",
+      "bytes": 884736,
+      "sha256": "75e23941b69ff8f39ed8429b2e9ac19de424b26c233eed6dd519aeab205e82ee"
+    },
+    {
+      "path": "pets/parafim/6.rgb",
+      "bytes": 884736,
+      "sha256": "3abafc1624cd653375bf1173bb281d2a62e80363dda1613d2a3e7b225a1545f5"
+    },
+    {
+      "path": "pets/parafim/7.rgb",
+      "bytes": 884736,
+      "sha256": "9c1fbef31b73e834c9de45ea52ee0d3a5bc82303fc365c2b6d30916568e5660c"
+    },
+    {
+      "path": "pets/parafim/8.rgb",
+      "bytes": 884736,
+      "sha256": "011902b03030c9ddebb8a15647a9e2517d6b88e71923f83560b7f17c0b06b322"
+    },
+    {
+      "path": "pets/parafim/elder0.rgb",
+      "bytes": 27648,
+      "sha256": "b727eabc3cd906774b2a3b3f9b86324753780dbfeaef0f7303f467e83f442cbf"
+    },
+    {
+      "path": "pets/parafim/elder1.rgb",
+      "bytes": 27648,
+      "sha256": "3fb204a52928bce841e5a1ebeca92df9e1b0a8c986922d98f23c72b7ae81a384"
+    },
+    {
+      "path": "pets/parafim/elder2.rgb",
+      "bytes": 27648,
+      "sha256": "c275b978d8ea65f7f474bc53e0a255607ad7d8326ceb3359443e65a00dda3367"
+    },
+    {
+      "path": "pets/parafim/family.json",
+      "bytes": 14498,
+      "sha256": "66c9fc65ee78a4ce94090219e5db6cbadf49c25fa453cd1468d7b930aa4f7e9a"
+    },
+    {
+      "path": "scenes/album.rgb",
+      "bytes": 460800,
+      "sha256": "431f3d5791a2b052ea67ebec3b2c8bab9f93d2d9188e6ab90c1b786ae9dac5a0"
+    },
+    {
+      "path": "scenes/banheiro.rgb",
+      "bytes": 460800,
+      "sha256": "63f623e4389a4679374af7c8b5cc893e03aa41bebdddd6d433a38fcb3e65b32c"
+    },
+    {
+      "path": "scenes/banho.rgb",
+      "bytes": 460800,
+      "sha256": "0a4c104dfaea1b55033f61e2dfae5dc93300a8581115d172b034e5afed1b09d6"
+    },
+    {
+      "path": "scenes/bercario.rgb",
+      "bytes": 460800,
+      "sha256": "6f78aad1824644e117833e307776e49dfb80c61159fae879dcf9f4de1053749d"
+    },
+    {
+      "path": "scenes/casa.rgb",
+      "bytes": 460800,
+      "sha256": "4cc2e4ed5a5884c6f875f422032da41b5d4bbc07f20239ff303f85ce02cff707"
+    },
+    {
+      "path": "scenes/cozinha.rgb",
+      "bytes": 460800,
+      "sha256": "a664b51e744de0643ce1a04b00e5d778988c77968dd63f13164f5ab8e1f2a296"
+    },
+    {
+      "path": "scenes/cuidados.rgb",
+      "bytes": 460800,
+      "sha256": "dc4b0de7743f5b28788fce7a960b2212108e2b7134c17d6521ef03c122a42d13"
+    },
+    {
+      "path": "scenes/jogos.rgb",
+      "bytes": 460800,
+      "sha256": "d7f54dd8ca09fb14c3a571642b234703d163e3939044eb60a01743662d627616"
+    },
+    {
+      "path": "scenes/quarto.rgb",
+      "bytes": 460800,
+      "sha256": "9eed21f31c3116726a0258a2d76cce371a2fddd5be0359819b205924d980c39d"
+    },
+    {
+      "path": "scenes/quintal.rgb",
+      "bytes": 460800,
+      "sha256": "1e18ff479d8e9f8e83d0a62c1ba6d28967a2de1a7cd982083f50eced1aab57f5"
+    },
+    {
+      "path": "ui/action0.rgb",
+      "bytes": 6912,
+      "sha256": "41fa410e6782f41a8468eda6b8ffd4ab3f188477d868e1aeef05808121176e62"
+    },
+    {
+      "path": "ui/action1.rgb",
+      "bytes": 6912,
+      "sha256": "bc1cea201c462304a44ead85e081f20b2ac05011fc69cb438c8aeda5dc431c7c"
+    },
+    {
+      "path": "ui/action2.rgb",
+      "bytes": 6912,
+      "sha256": "962060d2aa42929d3223161cac4c445729ba2f612580a6b058a81e3be7ac0d5f"
+    },
+    {
+      "path": "ui/action3.rgb",
+      "bytes": 6912,
+      "sha256": "421e1e77bef566c8e0ed0e37ff02d436c26ced9c078b3db73b27073f8f141195"
+    },
+    {
+      "path": "ui/action4.rgb",
+      "bytes": 6912,
+      "sha256": "0facbd7405eecc8ab694e58d8bb607561879165b3394ea396a92fb83e6849c06"
+    },
+    {
+      "path": "ui/action5.rgb",
+      "bytes": 6912,
+      "sha256": "6463758d43a7fd39186be6fe6052641542f6e84775b4fe0cb5e452d91465d8d6"
+    },
+    {
+      "path": "ui/action6.rgb",
+      "bytes": 6912,
+      "sha256": "eb0ebef78aa31acb6ec29e26c6742b674cb37d84571a6e8d30a9f8cfd9230007"
+    },
+    {
+      "path": "ui/action7.rgb",
+      "bytes": 6912,
+      "sha256": "e8b1a210c0f0df5297330b7972cbaf1c7708584c56a65acee6510cefdb9ff88f"
+    },
+    {
+      "path": "ui/basket.rgb",
+      "bytes": 13824,
+      "sha256": "d18fec5dda7fe76846bd01d1450b4d5a6e5339e9daa7a0983cdf3866a1f0f3e2"
+    },
+    {
+      "path": "ui/decor0.rgb",
+      "bytes": 12288,
+      "sha256": "beea80f8d390600de599cb7fc766ce5ff6b2e28b2f89f74d257704d06459d5f2"
+    },
+    {
+      "path": "ui/decor1.rgb",
+      "bytes": 12288,
+      "sha256": "7b09146e73c7bbfba18a3c23725aa390bfd492e2c210010bec5394d6cd32f322"
+    },
+    {
+      "path": "ui/decor10.rgb",
+      "bytes": 12288,
+      "sha256": "464a93c947bff8936b0959d65988d0879f5aa8b0c19bd06bbe66eb4f12e67815"
+    },
+    {
+      "path": "ui/decor11.rgb",
+      "bytes": 12288,
+      "sha256": "0c630c8b95dcab4ff78d9d3a128790d6c81e65c26e7ac015030fae9b96b0dd72"
+    },
+    {
+      "path": "ui/decor2.rgb",
+      "bytes": 12288,
+      "sha256": "b975a38cee4e4075f4136343d732095cc7d3033f6882cc0a18358fd36f22cb3f"
+    },
+    {
+      "path": "ui/decor3.rgb",
+      "bytes": 12288,
+      "sha256": "8eabfadc3b989150e562e96c58e50552031feeb6c455e4289e77a265099d0d81"
+    },
+    {
+      "path": "ui/decor4.rgb",
+      "bytes": 12288,
+      "sha256": "c985d610a0fea4413a32258b2b548ad76e2c871aba5a65edba1231ca10c93828"
+    },
+    {
+      "path": "ui/decor5.rgb",
+      "bytes": 12288,
+      "sha256": "27d82f6a28924a275467ccd2684acf19d651a62370842ce4144a23b5dab1d733"
+    },
+    {
+      "path": "ui/decor6.rgb",
+      "bytes": 12288,
+      "sha256": "51e8dfdda8d74bf9fd7c7914379a216b77b453aa7113dedd5a0f840cc70ec585"
+    },
+    {
+      "path": "ui/decor7.rgb",
+      "bytes": 12288,
+      "sha256": "10c35d08d632e46352fb05b2f91e2638c871401d8186219ec9e9fd8d84099523"
+    },
+    {
+      "path": "ui/decor8.rgb",
+      "bytes": 12288,
+      "sha256": "4fa4c93ca0acf8fb228874abd14d5a134b3b5df1e8e19a651642055bc9649152"
+    },
+    {
+      "path": "ui/decor9.rgb",
+      "bytes": 12288,
+      "sha256": "7390e3c1b36a8b5891215774399e5ec8a134fe4b633a83a2aec064f45390717a"
+    },
+    {
+      "path": "ui/font-small.bin",
+      "bytes": 220816,
+      "sha256": "62d3f1f0074d1cf0618dbd49819b5d86089d1e4098975c3bb03192b66cc8fb9e"
+    },
+    {
+      "path": "ui/font.bin",
+      "bytes": 333056,
+      "sha256": "980a9bebb7e204b26d7835b4197ccd6656bfc7f3577679c918c9ac4307f4c220"
+    },
+    {
+      "path": "ui/food0.rgb",
+      "bytes": 12288,
+      "sha256": "54e8df80431765036b1875a5eab870ca481f436db20e6077d4d40b1da7257473"
+    },
+    {
+      "path": "ui/food1.rgb",
+      "bytes": 12288,
+      "sha256": "96e40b790dfd506545233ba1ddfe544e5f624c4bcfdef41e46a9107e03c88e5a"
+    },
+    {
+      "path": "ui/food10.rgb",
+      "bytes": 12288,
+      "sha256": "017e2e182762f486126ec480d2f70fe3f483f663a8977a89a66464c3663b2757"
+    },
+    {
+      "path": "ui/food11.rgb",
+      "bytes": 12288,
+      "sha256": "bd24e8e6b1f76a4466740bf3463046afa8c19196d11abf22ce7aec69c9819f8c"
+    },
+    {
+      "path": "ui/food2.rgb",
+      "bytes": 12288,
+      "sha256": "7eb8ae045061bd4cc2f7bc7141409ebb9647f53f780780b81876fbc11a99c961"
+    },
+    {
+      "path": "ui/food3.rgb",
+      "bytes": 12288,
+      "sha256": "2fbfe1727db4536ecae4237646e17fdde705a1f6b5f11a7a61bbd3146a59025c"
+    },
+    {
+      "path": "ui/food4.rgb",
+      "bytes": 12288,
+      "sha256": "8092d49db17419633e1f580d7e2f6d43b7035139f62a6d539cadca25391d2600"
+    },
+    {
+      "path": "ui/food5.rgb",
+      "bytes": 12288,
+      "sha256": "c0a210f2826c0c2e9caedd6bbda5c350b77a4907a067582cea1f120e13d559af"
+    },
+    {
+      "path": "ui/food6.rgb",
+      "bytes": 12288,
+      "sha256": "6302413dfa779af5652fe7f9a497ac7d4a7998736368449bb1ef7e74a4379a11"
+    },
+    {
+      "path": "ui/food7.rgb",
+      "bytes": 12288,
+      "sha256": "bba318a6f6017e979535b7255292173a1c0b302ae19b1b9a8e80d05a4a61e26e"
+    },
+    {
+      "path": "ui/food8.rgb",
+      "bytes": 12288,
+      "sha256": "18f03851b4020c032e495686c14548b0084f088c7e0bc0b19018515dced500be"
+    },
+    {
+      "path": "ui/food9.rgb",
+      "bytes": 12288,
+      "sha256": "66664f6569ca509b30d017668a3e3c947a2e79f584d24a957d85e0dd4506816f"
+    },
+    {
+      "path": "ui/fruit.rgb",
+      "bytes": 3072,
+      "sha256": "e8d3e0358f8a854c3f56112f9d2e1811bcb499d8e153094d3df1503a6bf59933"
+    },
+    {
+      "path": "ui/strings.json",
+      "bytes": 58,
+      "sha256": "62884752837c7be2c532cca2ef56c2d15414b7200bc3e022051d4a771f924fdb"
+    }
+  ]
+}

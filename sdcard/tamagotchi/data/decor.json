@@ -1,0 +1,74 @@
+[
+  {
+    "id": 0,
+    "name": "Vaso de brotos",
+    "sprite": "ui/decor0.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 1,
+    "name": "Luminária de cristal",
+    "sprite": "ui/decor1.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 2,
+    "name": "Almofada nuvem",
+    "sprite": "ui/decor2.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 3,
+    "name": "Robô de corda",
+    "sprite": "ui/decor3.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 4,
+    "name": "Aquário",
+    "sprite": "ui/decor4.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 5,
+    "name": "Rede pantaneira",
+    "sprite": "ui/decor5.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 6,
+    "name": "Bola",
+    "sprite": "ui/decor6.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 7,
+    "name": "Cata-vento",
+    "sprite": "ui/decor7.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 8,
+    "name": "Livros",
+    "sprite": "ui/decor8.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 9,
+    "name": "Tambor",
+    "sprite": "ui/decor9.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 10,
+    "name": "Cacto",
+    "sprite": "ui/decor10.rgb",
+    "unlock": "convivência e jogos"
+  },
+  {
+    "id": 11,
+    "name": "Estrela de madeira",
+    "sprite": "ui/decor11.rgb",
+    "unlock": "convivência e jogos"
+  }
+]

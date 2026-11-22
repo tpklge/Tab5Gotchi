@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Jokenpô",
+    "instruction": "Escolha pedra, papel ou tesoura. Vence quem fizer 3 pontos."
+  },
+  {
+    "id": 2,
+    "name": "Par ou ímpar",
+    "instruction": "Escolha paridade e um número de 0 a 5. São 5 rodadas. A soma zero é par."
+  },
+  {
+    "id": 3,
+    "name": "Esquerda ou direita",
+    "instruction": "Adivinhe para onde seu amigo vai olhar. São 5 tentativas."
+  },
+  {
+    "id": 4,
+    "name": "Maior ou menor",
+    "instruction": "O próximo número será maior ou menor? Igual repete, sem penalidade."
+  },
+  {
+    "id": 5,
+    "name": "Memória",
+    "instruction": "Encontre os pares de retratos. Toque em duas cartas por vez."
+  },
+  {
+    "id": 6,
+    "name": "Sequência musical",
+    "instruction": "Observe cores e símbolos. Depois repita a sequência."
+  },
+  {
+    "id": 7,
+    "name": "Pega-frutinha",
+    "instruction": "Arraste a cesta e apanhe as frutas durante 30 segundos."
+  },
+  {
+    "id": 8,
+    "name": "Esconde-esconde",
+    "instruction": "Encontre seu amigo em um dos seis objetos. Três rodadas."
+  }
+]

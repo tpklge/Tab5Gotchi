@@ -1,0 +1,982 @@
+{
+  "id": "nuvito",
+  "name": "Nuvito",
+  "index": 4,
+  "forms": [
+    {
+      "id": "nuvito_0",
+      "name": "Flocim",
+      "file": "pets/nuvito/0.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_1",
+      "name": "Nuvim",
+      "file": "pets/nuvito/1.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_2",
+      "name": "Brisanso",
+      "file": "pets/nuvito/2.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_3",
+      "name": "Ventito",
+      "file": "pets/nuvito/3.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_4",
+      "name": "Pluminho",
+      "file": "pets/nuvito/4.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_5",
+      "name": "Tempestino",
+      "file": "pets/nuvito/5.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_6",
+      "name": "Arcoíro",
+      "file": "pets/nuvito/6.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_7",
+      "name": "Cirrô",
+      "file": "pets/nuvito/7.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "nuvito_8",
+      "name": "Ovo",
+      "file": "pets/nuvito/8.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "balancar": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "rachadura": [
+          12,
+          13,
+          14,
+          15
+        ],
+        "eclosao": [
+          24,
+          25,
+          26,
+          27
+        ]
+      }
+    }
+  ],
+  "base_color": "#c1bddd",
+  "palettes": [
+    "#c1bddd",
+    "#dca986",
+    "#91bab3",
+    "#b2a6cb"
+  ],
+  "details": [
+    "pinta",
+    "faixa"
+  ],
+  "adult_paths": {
+    "tranquilo": 4,
+    "explorador": 5,
+    "social": 6
+  }
+}

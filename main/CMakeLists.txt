@@ -1,0 +1,8 @@
+set(gotchi_sources "main.cpp" "core/engine.cpp" "storage/store.cpp" "board/board.cpp" "board/audio.cpp" "ui/app.cpp" "extensions/breeding.cpp")
+set(gotchi_requires m5stack_tab5 esp_timer fatfs mbedtls json app_update esp_driver_usb_serial_jtag esp_wifi esp_netif esp_event lwip)
+if(CONFIG_GOTCHI_LAN)
+    list(APPEND gotchi_sources "extensions/lan.cpp" "extensions/visit_protocol.cpp")
+    list(APPEND gotchi_requires esp_hosted esp_wifi_remote esp_wifi esp_netif esp_event lwip)
+endif()
+idf_component_register(SRCS ${gotchi_sources} INCLUDE_DIRS "." REQUIRES ${gotchi_requires})
+target_compile_features(${COMPONENT_LIB} PUBLIC cxx_std_17)

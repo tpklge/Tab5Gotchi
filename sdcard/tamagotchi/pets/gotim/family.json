@@ -1,0 +1,982 @@
+{
+  "id": "gotim",
+  "name": "Gotim",
+  "index": 3,
+  "forms": [
+    {
+      "id": "gotim_0",
+      "name": "Gotícula",
+      "file": "pets/gotim/0.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_1",
+      "name": "Pinguim-d’água",
+      "file": "pets/gotim/1.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_2",
+      "name": "Ondim",
+      "file": "pets/gotim/2.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_3",
+      "name": "Saltágua",
+      "file": "pets/gotim/3.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_4",
+      "name": "Coralino",
+      "file": "pets/gotim/4.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_5",
+      "name": "Marulhão",
+      "file": "pets/gotim/5.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_6",
+      "name": "Bolhudo",
+      "file": "pets/gotim/6.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_7",
+      "name": "Gotavô",
+      "file": "pets/gotim/7.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "gotim_8",
+      "name": "Ovo",
+      "file": "pets/gotim/8.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "balancar": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "rachadura": [
+          12,
+          13,
+          14,
+          15
+        ],
+        "eclosao": [
+          24,
+          25,
+          26,
+          27
+        ]
+      }
+    }
+  ],
+  "base_color": "#65c4d1",
+  "palettes": [
+    "#65c4d1",
+    "#dca986",
+    "#91bab3",
+    "#b2a6cb"
+  ],
+  "details": [
+    "pinta",
+    "faixa"
+  ],
+  "adult_paths": {
+    "tranquilo": 4,
+    "explorador": 5,
+    "social": 6
+  }
+}

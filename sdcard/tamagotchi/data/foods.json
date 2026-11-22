@@ -1,0 +1,122 @@
+[
+  {
+    "id": "arroz",
+    "name": "Arroz com legumes",
+    "short_name": "Arroz",
+    "kind": 0,
+    "fullness": 24,
+    "happiness": 4,
+    "health": 3,
+    "icon": 0
+  },
+  {
+    "id": "sopa",
+    "name": "Sopa do quintal",
+    "short_name": "Sopa",
+    "kind": 0,
+    "fullness": 22,
+    "happiness": 4,
+    "health": 4,
+    "icon": 1
+  },
+  {
+    "id": "graos",
+    "name": "Prato de grãos",
+    "short_name": "Grãos",
+    "kind": 0,
+    "fullness": 25,
+    "happiness": 3,
+    "health": 3,
+    "icon": 2
+  },
+  {
+    "id": "peixe",
+    "name": "Peixinho do lago",
+    "short_name": "Peixe",
+    "kind": 0,
+    "fullness": 26,
+    "happiness": 4,
+    "health": 2,
+    "icon": 3
+  },
+  {
+    "id": "salada",
+    "name": "Salada colorida",
+    "short_name": "Salada",
+    "kind": 0,
+    "fullness": 20,
+    "happiness": 3,
+    "health": 4,
+    "icon": 4
+  },
+  {
+    "id": "milho",
+    "name": "Milho cozido",
+    "short_name": "Milho",
+    "kind": 0,
+    "fullness": 22,
+    "happiness": 4,
+    "health": 2,
+    "icon": 5
+  },
+  {
+    "id": "maca",
+    "name": "Maçã",
+    "short_name": "Maçã",
+    "kind": 1,
+    "fullness": 14,
+    "happiness": 4,
+    "health": 3,
+    "icon": 6
+  },
+  {
+    "id": "banana",
+    "name": "Banana",
+    "short_name": "Banana",
+    "kind": 1,
+    "fullness": 15,
+    "happiness": 4,
+    "health": 2,
+    "icon": 7
+  },
+  {
+    "id": "melancia",
+    "name": "Melancia",
+    "short_name": "Melancia",
+    "kind": 1,
+    "fullness": 12,
+    "happiness": 5,
+    "health": 3,
+    "icon": 8
+  },
+  {
+    "id": "manga",
+    "name": "Manga",
+    "short_name": "Manga",
+    "kind": 1,
+    "fullness": 13,
+    "happiness": 5,
+    "health": 3,
+    "icon": 9
+  },
+  {
+    "id": "biscoito",
+    "name": "Biscoito caseiro",
+    "short_name": "Biscoito",
+    "kind": 2,
+    "fullness": 6,
+    "happiness": 9,
+    "health": -1,
+    "icon": 10
+  },
+  {
+    "id": "bolinho",
+    "name": "Bolinho de fruta",
+    "short_name": "Bolinho",
+    "kind": 2,
+    "fullness": 8,
+    "happiness": 9,
+    "health": -1,
+    "icon": 11
+  }
+]

@@ -1,0 +1,14 @@
+/build/
+/managed_components/
+/.venv/
+/sdkconfig.old
+__pycache__/
+/private/
+/build-host/
+
+.DS_Store
+/dist/
+/sdcard/tamagotchi/saves/*
+!/sdcard/tamagotchi/saves/LEIA-ME.txt
+/sdcard/tamagotchi/album/*
+!/sdcard/tamagotchi/album/LEIA-ME.txt

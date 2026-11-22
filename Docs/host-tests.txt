@@ -1,0 +1,3 @@
+PASS: identidade, recuperação A/B, cuidados, evolução 36 caminhos, tempo e oito jogos
+PASS: herança local, pais compatíveis e ausência de híbridos
+PASS: visita LAN em dois processos UDP, validação de bytes e duplicação

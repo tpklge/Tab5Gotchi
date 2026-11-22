@@ -1,0 +1,15 @@
+#ifndef __ASSEMBLER__
+#include "sdkconfig.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "@IDF_PATH_FOR_FATFS@/components/fatfs/src/ffconf.h"
+#ifdef __cplusplus
+}
+#endif
+#ifndef CONFIG_FATFS_USE_LABEL
+#define CONFIG_FATFS_USE_LABEL 0
+#endif
+#undef FF_FS_EXFAT
+#define FF_FS_EXFAT 1
+#endif

@@ -1,0 +1,15 @@
+Regressão física composta, 22/11/2026. Entrada USB no controlador e LVGL.
+PASS cuidados iniciais, eventos de toque LVGL e três perfis
+PASS jogo 1 placar 1 3 pontos 0 recompensa única
+PASS jogo 2 placar 5 0 pontos 0 recompensa única
+PASS jogo 3 placar 3 2 pontos 0 recompensa única
+PASS jogo 4 placar 3 2 pontos 0 recompensa única
+PASS jogo 5 placar 8 4 pontos 0 recompensa única
+PASS jogo 6 placar 10 0 pontos 0 recompensa única
+PASS jogo 7 placar 13 0 pontos 13 recompensa única
+PASS jogo 8 placar 0 3 pontos 0 recompensa única
+PASS banho, recuperação, confirmação e perfis separados
+PASS jogo 7 placar 13 0 pontos 13 recompensa única
+PASS: versão final, ABC, cinco reinícios da fruta e recompensa única
+PASS: identidade e partidas preservadas após retorno ao launcher e reinício.
+PASS: bootloader, launcher e Meshtastic iguais ao backup inicial.

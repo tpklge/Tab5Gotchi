@@ -1,0 +1,19 @@
+{
+  "incubation_min": 180,
+  "incubation_max": 300,
+  "baby_ms": 7200000,
+  "child_ms": 86400000,
+  "teen_ms": 259200000,
+  "adult_ms": 1209600000,
+  "decay_per_10_minutes": [
+    1.8,
+    1.1,
+    1.0,
+    1.2,
+    3.2
+  ],
+  "offline_tolerance_seconds": 7200,
+  "offline_limit_seconds": 43200,
+  "checkpoint_seconds": 60,
+  "classic_risk_hours": 48
+}

@@ -1,0 +1,982 @@
+{
+  "id": "brotito",
+  "name": "Brotito",
+  "index": 1,
+  "forms": [
+    {
+      "id": "brotito_0",
+      "name": "Sementim",
+      "file": "pets/brotito/0.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_1",
+      "name": "Brotinho",
+      "file": "pets/brotito/1.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_2",
+      "name": "Folhanso",
+      "file": "pets/brotito/2.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_3",
+      "name": "Ramisco",
+      "file": "pets/brotito/3.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_4",
+      "name": "Florim",
+      "file": "pets/brotito/4.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_5",
+      "name": "Galhote",
+      "file": "pets/brotito/5.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_6",
+      "name": "Frutino",
+      "file": "pets/brotito/6.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_7",
+      "name": "Tronquim",
+      "file": "pets/brotito/7.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "piscar": [
+          0,
+          28,
+          0
+        ],
+        "olhar": [
+          0,
+          29,
+          30
+        ],
+        "andar": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "feliz": [
+          10,
+          11,
+          10
+        ],
+        "triste": [
+          12,
+          13
+        ],
+        "fome": [
+          12,
+          14,
+          13
+        ],
+        "cansaco": [
+          18,
+          28,
+          19
+        ],
+        "dormir": [
+          18,
+          19
+        ],
+        "comer": [
+          14,
+          15,
+          14,
+          31
+        ],
+        "beber": [
+          16,
+          17,
+          16,
+          31
+        ],
+        "urgencia": [
+          22,
+          23,
+          12
+        ],
+        "banheiro": [
+          22,
+          23,
+          22
+        ],
+        "banho": [
+          20,
+          21,
+          20,
+          31
+        ],
+        "doente": [
+          24,
+          25
+        ],
+        "vitoria": [
+          10,
+          11,
+          26
+        ],
+        "derrota": [
+          12,
+          13,
+          25
+        ],
+        "carinho": [
+          26,
+          27,
+          11
+        ],
+        "evolucao": [
+          10,
+          26,
+          11,
+          27
+        ]
+      }
+    },
+    {
+      "id": "brotito_8",
+      "name": "Ovo",
+      "file": "pets/brotito/8.rgb",
+      "width": 96,
+      "height": 96,
+      "frames": 32,
+      "format": "RGB565A8_PLANAR",
+      "anchor": [
+        48,
+        81
+      ],
+      "animations": {
+        "idle": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "balancar": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "rachadura": [
+          12,
+          13,
+          14,
+          15
+        ],
+        "eclosao": [
+          24,
+          25,
+          26,
+          27
+        ]
+      }
+    }
+  ],
+  "base_color": "#79b950",
+  "palettes": [
+    "#79b950",
+    "#dca986",
+    "#91bab3",
+    "#b2a6cb"
+  ],
+  "details": [
+    "pinta",
+    "faixa"
+  ],
+  "adult_paths": {
+    "tranquilo": 4,
+    "explorador": 5,
+    "social": 6
+  }
+}

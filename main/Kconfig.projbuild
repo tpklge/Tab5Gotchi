@@ -1,0 +1,13 @@
+menu "Bichinhos do Tab5"
+config GOTCHI_BREEDING
+    bool "Reprodução e herança local"
+    default n
+    help
+        Habilita escolha de dois perfis adultos para criar ovo no terceiro perfil livre.
+config GOTCHI_LAN
+    bool "Visitas e presentes em rede local"
+    default n
+    help
+        Requer variante de build com ESP-Hosted 2.13.1 e esp_wifi_remote 1.6.5.
+        Nunca depende de cloud, conta ou internet.
+endmenu

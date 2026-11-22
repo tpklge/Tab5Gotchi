@@ -1,0 +1,29 @@
+{
+  "internalFree": {
+    "min": 460383,
+    "max": 473107
+  },
+  "psramFree": {
+    "min": 29137512,
+    "max": 29424800
+  },
+  "largest": {
+    "min": 368640,
+    "max": 376832
+  },
+  "audioErrors": {
+    "min": 0,
+    "max": 0
+  },
+  "audioBlocks": {
+    "min": 304,
+    "max": 15439
+  },
+  "fps": {
+    "min": 0,
+    "max": 24.75049591064453
+  },
+  "internalLowWatermark": 402111,
+  "uiStackFreeMin": 7828,
+  "savePayloadBytes": 4872
+}
