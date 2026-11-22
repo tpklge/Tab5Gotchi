@@ -4,9 +4,20 @@ Jogo offline de bichinho virtual para M5Stack Tab5, com interface touch em portu
 
 Estado e evidências reais em [Docs/status.md](Docs/status.md). A documentação de concepção original está preservada em Docs. Teste host, compilação e teste no Tab5 são registrados separadamente.
 
-## Downloads
+## Instalar sem compilar
 
-Firmware, pacote do microSD, fontes e checksums estão nas [Releases do GitHub](https://github.com/tpklge/Tab5Gotchi/releases/latest). Use somente o aplicativo pelo launcher; preserve saves e álbum ao atualizar os recursos.
+Baixe estes dois arquivos prontos:
+
+- **[Baixar firmware .bin](https://github.com/tpklge/Tab5Gotchi/releases/latest/download/tab5gotchi-app.bin)** — aplicativo padrão para o launcher.
+- **[Baixar recursos do microSD](https://github.com/tpklge/Tab5Gotchi/releases/latest/download/sdcard.zip)** — imagens, fontes e sons necessários ao jogo.
+
+1. Extraia sdcard.zip e copie a pasta `tamagotchi` para a raiz do microSD. Preserve as pastas `tamagotchi/saves` e `tamagotchi/album` se já tiver progresso.
+2. No launcher do Paludo, abra o gerenciador de aplicativos, selecione o arquivo `tab5gotchi-app.bin` e instale. Use o fluxo de atualização se o jogo já estiver instalado.
+3. Abra o Tab5Gotchi pelo launcher. Não é necessário instalar ESP-IDF nem compilar o projeto.
+
+O `.bin` contém somente o aplicativo e precisa dos recursos do SD. Não grave esse arquivo como uma imagem completa pelo endereço zero. Ele não inclui o launcher.
+
+[Todos os arquivos e checksums](https://github.com/tpklge/Tab5Gotchi/releases/latest). A variante `extras` é opcional e sua integração entre dois aparelhos ainda não foi validada; para uso normal, escolha o firmware padrão acima.
 
 ## Compilar
 
